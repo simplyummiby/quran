@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Qur'an Reading Cycle v0.8.4</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Scheherazade+New:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-icon" aria-hidden="true">📖</div>
+        <div>
+          <h1>Qur'an Reading Cycle</h1>
+          <p>120 readings • steady progress, no dates</p>
+        </div>
+      </div>
+      <nav class="top-actions" aria-label="Top navigation">
+        <button class="ghost-btn" data-view="readings">Reading Cycle</button>
+        <button class="ghost-btn" data-view="progress">Progress</button>
+        <button class="ghost-btn" data-view="history">History</button>
+      </nav>
+    </header>
+
+    <main class="layout">
+      <aside class="sidebar">
+        <button class="nav-item active" data-view="home">⌂ <span>Home</span></button>
+        <button class="nav-item" data-view="current">📖 <span>Current Reading</span></button>
+        <button class="nav-item" data-view="readings">☷ <span>Reading Cycle</span></button>
+        <button class="nav-item" data-view="history">◷ <span>History</span></button>
+        <button class="nav-item" data-modal="aboutSchedule">ⓘ <span>About This Schedule</span></button>
+        <button class="nav-item" data-view="progress">◌ <span>Progress</span></button>
+
+        <div class="quote-card">
+          <div class="arabic-small">ذَٰلِكَ الْكِتَابُ لَا رَيْبَ ۛ فِيهِ</div>
+          <p>This is the Book about which there is no doubt, a guidance for those conscious of Allah.</p>
+          <strong>— Al-Baqarah 2:2</strong>
+        </div>
+      </aside>
+
+      <section class="content" id="homeView">
+        <div class="welcome">
+          <h2>As-salāmu ‘alaykum</h2>
+          <div class="flourish">✤</div>
+        </div>
+
+        <section class="hero-card">
+          <div class="hero-icon">📖</div>
+          <div class="hero-main">
+            <p class="eyebrow">Continue where you left off</p>
+            <h3 id="homeReadingTitle">Reading 1 of 120</h3>
+            <p id="homePassageTitle" class="subtle"></p>
+            <div class="metrics" id="homeMetrics"></div>
+            <div class="bar"><span id="heroBar"></span></div>
+          </div>
+          <button class="primary-btn" id="homeReaderBtn">Continue Reading</button>
+        </section>
+
+        <section class="jump-card">
+          <p class="eyebrow">Or start from another reading</p>
+          <div class="search-line">
+            <label class="search-box" for="jumpSearch">⌕
+              <input id="jumpSearch" type="search" placeholder="Search by reading number, surah name, theme, or range..." autocomplete="off" />
+            </label>
+            <button class="ghost-outline" id="browseAllBtn">☷ Browse All</button>
+          </div>
+          <div class="examples">Examples: <button data-query="37">37</button><button data-query="Yusuf">Yusuf</button><button data-query="Al-Kahf">Al-Kahf</button><button data-query="50-60">50-60</button><button data-query="100+">100+</button></div>
+          <div class="jump-results-wrap">
+            <div id="jumpResults" class="jump-results"></div>
+            <aside id="jumpPreview" class="preview-card"></aside>
+          </div>
+          <p class="gentle-note">💡 Choosing a starting reading only sets your current place. It will not mark earlier readings complete.</p>
+        </section>
+
+        <section class="start-cycle-card">
+          <div class="cycle-icon">↻</div>
+          <div>
+            <p class="eyebrow">Restart Current Cycle</p>
+            <strong>Start this cycle over from Reading 1.</strong>
+            <p>This clears only this app’s completion checks. It will not create a completed cycle or increase the cycle number.</p>
+          </div>
+          <button class="gold-btn" id="startNewCycleBtn">Restart Current Cycle</button>
+        </section>
+      </section>
+
+      <section class="content hidden" id="currentView">
+        <div class="current-heading">
+          <button class="circle-btn" id="prevBtn" aria-label="Previous reading">‹</button>
+          <div>
+            <p class="eyebrow">Current Reading</p>
+            <h2 id="readingTitle">Reading 1 of 120</h2>
+          </div>
+          <button class="circle-btn" id="nextBtn" aria-label="Next reading">›</button>
+        </div>
+        <article class="reading-card" id="readingCard">
+          <div class="book-divider">📖</div>
+          <div id="passageList" class="passage-list"></div>
+          <p class="theme" id="readingTheme"></p>
+          <div class="metrics centered-metrics" id="currentMetrics"></div>
+          <div class="reading-actions"><button class="primary-btn" id="openReaderBtn">Read in App</button><a id="quranLink" class="soft-link-btn inline-link" href="#" target="_blank" rel="noopener">Open on Quran.com</a></div>
+        </article>
+
+        <article class="completion-card hidden" id="completionCard" aria-live="polite">
+          <div class="completion-mark">✓</div>
+          <p class="eyebrow centered">Reading marked complete</p>
+          <h2>Alḥamdulillāh</h2>
+          <p id="completedSummary" class="completion-summary"></p>
+          <div class="soft-divider"></div>
+          <p class="eyebrow centered">Up Next</p>
+          <div id="nextPreview" class="next-preview"></div>
+          <div class="completion-actions"><button class="soft-btn compact-soft" id="undoCompleteBtn">↶ Undo</button><button class="primary-btn" id="beginNextBtn">Begin Next Reading</button></div>
+        </article>
+
+        <section class="about-reading" id="aboutReadingPanel">
+          <p class="eyebrow centered">About This Reading</p>
+          <p id="readingDescription"></p>
+          <button class="complete-btn" id="completeBtn"><span id="completeBox">☐</span> Mark Complete</button>
+        </section>
+      </section>
+
+      <section class="content hidden" id="readingsView">
+        <div class="section-heading"><p class="eyebrow">Reading Cycle</p><h2>All Readings</h2></div>
+        <div class="filter-row">
+          <button class="pill active" data-filter="all">All</button>
+          <button class="pill" data-filter="completed">Completed</button>
+          <button class="pill" data-filter="remaining">Remaining</button>
+        </div>
+        <div id="allReadings" class="readings-list"></div>
+      </section>
+
+      <section class="content hidden" id="historyView">
+        <div class="section-heading"><p class="eyebrow">Reading History</p><h2>Your Journey</h2></div>
+        <div class="history-grid">
+          <section class="history-card current-cycle-history">
+            <p class="eyebrow">Current Cycle</p>
+            <div id="historyCurrentCycle"></div>
+          </section>
+          <section class="history-card">
+            <div class="history-title-row">
+              <div>
+                <p class="eyebrow">Completed Cycles</p>
+                <h3>Past Cycles</h3>
+              </div>
+              <span id="historyTotal" class="history-count">0</span>
+            </div>
+            <div id="completedCyclesHistory"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="content hidden" id="progressView">
+        <div class="section-heading"><p class="eyebrow">Progress</p><h2>Your Cycle</h2></div>
+        <div class="progress-large">
+          <div class="ring" id="bigRing"><span id="bigPercent">0%</span></div>
+          <p id="bigProgressText">0 readings completed in this cycle</p>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-card"><strong id="cycleStat">1</strong><span>Current Cycle</span></div>
+          <div class="stat-card"><strong id="completedStat">0</strong><span>Completed</span></div>
+          <div class="stat-card"><strong id="remainingStat">120</strong><span>Not Checked</span></div>
+          <div class="stat-card"><strong id="currentStat">1</strong><span>Current Reading</span></div>
+        </div>
+      </section>
+
+      <aside class="right-panel">
+        <div class="panel-card progress-card">
+          <p class="eyebrow centered">Overall Progress</p>
+          <div class="ring" id="sideRing"><span id="sidePercent">0%</span></div>
+          <p id="progressText">0 readings completed in this cycle</p>
+          <div class="mini-stats"><span><strong id="sideCompleted">0</strong> Completed</span><span><strong id="sideRemaining">120</strong> Not checked</span></div>
+        </div>
+        <div class="panel-card">
+          <p class="eyebrow">Current Cycle</p>
+          <h3 id="cycleTitle">Cycle 1</h3>
+          <p id="cycleDetails" class="subtle">Reading 1 of 120</p>
+        </div>
+        <div class="panel-card">
+          <p class="eyebrow">Up Next</p>
+          <button class="next-card" id="upNextBtn"><span id="nextBadge">2</span><span><strong id="upNextTitle"></strong><small id="upNextTheme"></small></span><span>→</span></button>
+        </div>
+        <div class="tip-card"><strong>Tip</strong><p>No dates. No feeling behind. Just continue with the next reading.</p></div>
+      </aside>
+    </main>
+  </div>
+
+  <div class="modal-backdrop hidden" id="aboutModal" role="dialog" aria-modal="true" aria-labelledby="aboutModalTitle">
+    <div class="modal-card">
+      <button class="modal-close" id="closeAboutModal" aria-label="Close about schedule">×</button>
+      <div class="modal-icon">📖</div>
+      <h2 id="aboutModalTitle">About This Schedule</h2>
+      <p>This 120-reading cycle is a working draft designed to help you move through the Qur'an steadily without tying your reading to calendar dates or streak pressure.</p>
+      <p>The plan keeps many shorter surahs whole, groups very short surahs where that feels more natural, and divides longer surahs into manageable readings that aim to follow major shifts in subject matter.</p>
+      <p>Your <strong>current reading</strong> is your bookmark. Your <strong>completed count</strong> only includes readings you personally mark complete inside this app. Starting from the middle of the schedule will not automatically mark earlier readings complete.</p>
+      <p>The divisions are intentionally provisional. As the schedule is refined, the goal is to use the natural flow of the Qur'an and trusted tafsir references, especially Tafsīr Ibn Kathīr and Tafsīr as-Saʿdī, to improve the stopping points in the longer surahs.</p>
+      <p><strong>Arabic text:</strong> Hafs ʿan ʿĀṣim, using Uthmani script where available. <strong>English translation:</strong> Muhsin Khan &amp; Taqi-ud-Din al-Hilali.</p>
+      <p class="dua">May Allah make the Qur'an a light for our hearts, grant us understanding, and accept our recitation. Āmīn.</p>
+      <button class="soft-btn" id="gotItAbout">JazākAllāhu Khayran</button>
+    </div>
+  </div>
+
+
+  <section class="reader-mode hidden" id="readerModal" aria-labelledby="readerModalTitle">
+    <header class="reader-mode-header">
+      <button class="exit-reader-btn" id="closeReaderModal">← Exit Reading Mode</button>
+      <div class="reader-title-block">
+        <p class="reader-eyebrow">Reading Mode</p>
+        <h2 id="readerModalTitle">Reading 1 of 120</h2>
+        <p id="readerSubtitle" class="subtle"></p>
+      </div>
+      <a id="readerQuranLink" class="reader-quran-btn" href="#" target="_blank" rel="noopener">Open on Quran.com →</a>
+    </header>
+
+    <nav class="reader-nav-row" aria-label="Reading navigation">
+      <button class="reader-nav-btn reader-nav-prev" id="readerPrevBtn" type="button"><span class="reader-nav-arrow">←</span><span class="reader-nav-copy"><strong>Previous Reading</strong><small id="readerPrevLabel">Beginning</small></span></button>
+      <span class="reader-position-pill" id="readerPositionPill">Reading 1 of 120</span>
+      <button class="reader-nav-btn reader-nav-next" id="readerNextBtn" type="button"><span class="reader-nav-copy"><strong>Next Reading</strong><small id="readerNextLabel">Next</small></span><span class="reader-nav-arrow">→</span></button>
+    </nav>
+
+    <div class="reader-toolbar reader-mode-toolbar">
+      <div class="toggle-group" aria-label="Reader display mode">
+        <button class="toggle-btn active" id="modeBothBtn">Arabic + English</button>
+        <button class="toggle-btn" id="modeArabicBtn">Arabic only</button>
+      </div>
+      <div class="reader-source-note">English: Muhsin Khan &amp; Taqi-ud-Din al-Hilali <span aria-hidden="true">ⓘ</span></div>
+      <div class="font-controls" aria-label="Text size controls">
+        <button class="circle-btn small-circle" id="fontDownBtn" aria-label="Decrease text size">A−</button>
+        <button class="circle-btn small-circle" id="fontUpBtn" aria-label="Increase text size">A+</button>
+        <button class="circle-btn settings-circle" id="readerAppearanceBtn" aria-label="Open reader appearance settings">⚙</button>
+      </div>
+    </div>
+
+    <main class="reader-body reader-mode-body" id="readerBody">
+      <div class="reader-loading">Loading Qur’an text…</div>
+    </main>
+
+    <div class="resume-reading-card hidden" id="resumeReadingCard" role="dialog" aria-live="polite" aria-label="Continue where you left off">
+      <div>
+        <strong>Continue where you left off?</strong>
+        <p id="resumeReadingText">You have saved progress in this reading.</p>
+      </div>
+      <div class="resume-actions">
+        <button class="reader-white-btn compact-reader-btn" id="startReadingOverBtn" type="button">Start This Reading Over</button>
+        <button class="complete-btn compact-reader-btn" id="resumeReadingBtn" type="button">Resume Reading</button>
+      </div>
+    </div>
+
+    <aside class="reader-appearance-panel hidden" id="readerAppearancePanel" aria-label="Reader appearance settings">
+      <div class="appearance-panel-head">
+        <h3>Reader Preferences</h3>
+        <button class="circle-btn" id="closeReaderAppearance" aria-label="Close reader appearance settings">×</button>
+      </div>
+      <div class="appearance-section">
+        <h4>Arabic Font Size</h4>
+        <div class="segmented-options" data-pref-group="arabicSize">
+          <button data-arabic-size="small">✓ Small</button>
+          <button data-arabic-size="medium">Medium</button>
+          <button data-arabic-size="large">Large</button>
+        </div>
+      </div>
+      <div class="appearance-section">
+        <h4>English Font Size</h4>
+        <div class="segmented-options" data-pref-group="englishSize">
+          <button data-english-size="small">✓ Small</button>
+          <button data-english-size="medium">Medium</button>
+          <button data-english-size="large">Large</button>
+        </div>
+      </div>
+      <div class="appearance-section">
+        <h4>Translation</h4>
+        <label class="checkline"><input type="checkbox" id="showEnglishToggle"> <span>Show English Translation</span></label>
+        <p class="translation-note"><strong>English Translation:</strong> Muhsin Khan &amp; Taqi-ud-Din al-Hilali</p>
+      </div>
+      <div class="appearance-section">
+        <h4>Reading Width</h4>
+        <div class="segmented-options width-options">
+          <button data-reader-width="standard">Standard</button>
+          <button data-reader-width="wide">Wide</button>
+        </div>
+      </div>
+      <div class="appearance-section">
+        <h4>Reader Theme</h4>
+        <div class="theme-swatches" aria-label="Reader theme">
+          <button class="theme-swatch theme-green active" data-reader-theme="green" aria-label="Soft green theme" title="Soft Green">✓</button>
+          <button class="theme-swatch theme-cream" data-reader-theme="cream" aria-label="Cream theme" title="Cream"></button>
+          <button class="theme-swatch theme-dark" data-reader-theme="dark" aria-label="Dark theme" title="Night"></button>
+        </div>
+      </div>
+      <button class="reader-white-btn reset-reader-btn" id="resetReaderAppearance">↻ Reset to Defaults</button>
+    </aside>
+
+    <footer class="reader-footer reader-mode-footer">
+      <div class="reader-footer-left">
+        <button class="reader-white-btn" id="readerBookmarkBtn" type="button">♡ Bookmark</button>
+        <button class="reader-white-btn" id="readerNotesBtn" type="button">▤ Notes</button>
+      </div>
+      <div class="reader-progress-wrap" aria-label="Reading progress">
+        <span>Current Position</span>
+        <div class="reader-progress-track"><span id="readerProgressBar"></span></div>
+        <strong id="readerProgressText">0%</strong>
+      </div>
+      <div class="reader-footer-right">
+        <button class="reader-white-btn" id="readerExitBottomBtn">← Exit Reading Mode</button>
+        <button class="complete-btn reader-complete" id="readerCompleteBtn"><span>☐</span> Mark Complete</button>
+      </div>
+    </footer>
+  </section>
+
+  <script src="app.js"></script>
+</body>
+</html>
