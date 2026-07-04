@@ -930,3 +930,63 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
 @media (max-width: 720px){
   .reader-progress-wrap strong { text-align:center; max-width: 100%; }
 }
+
+
+/* v0.8.7 clearer reading labels + surah numbers */
+.jump-row {
+  grid-template-columns: 64px minmax(0, 1fr) auto;
+}
+.jump-row .num,
+.reading-num {
+  width: 58px;
+  min-height: 48px;
+  height: auto;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  gap: 1px;
+  padding: 5px 4px;
+  line-height: 1;
+  text-align: center;
+}
+.jump-row .num small,
+.reading-num small {
+  display: block;
+  color: var(--green);
+  font-size: .68rem;
+  font-weight: 800;
+  line-height: 1;
+  margin: 0;
+}
+.jump-row .num strong,
+.reading-num strong {
+  display: block;
+  color: var(--green);
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 1.12rem;
+  font-weight: 900;
+  line-height: 1.05;
+}
+.reading-row-main {
+  grid-template-columns: 64px minmax(0, 1fr);
+}
+.reading-row-main strong,
+.jump-row strong,
+#homePassageTitle,
+#upNextTitle {
+  overflow-wrap: anywhere;
+}
+@media (max-width:760px){
+  .jump-row {
+    grid-template-columns: 58px minmax(0, 1fr);
+  }
+  .jump-row > span:last-child {
+    grid-column: 2;
+    justify-self: start;
+    font-size: .88rem;
+    color: var(--muted);
+  }
+  .reading-row-main {
+    grid-template-columns: 58px minmax(0, 1fr);
+  }
+}

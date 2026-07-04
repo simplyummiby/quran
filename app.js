@@ -177,7 +177,20 @@ normalizeState();
 save();
 function currentReading(){ return readings[state.current - 1] || readings[0]; }
 function isCompleted(id){ return state.completed.has(id); }
-function passageTitle(reading){ return reading.passages.map(item => item.name.startsWith('Review:') ? item.name : `${item.name} ${item.start}–${item.end}`).join(' + '); }
+function formatSurahNumber(number){
+  return `(${String(number).padStart(3,'0')})`;
+}
+function passageSurahNumber(reading, passageIndex){ return reading.quranSurah + passageIndex; }
+function passageTitle(reading, { withSurahNumbers = false, joiner = ' + ' } = {}){
+  return reading.passages.map((item, idx) => {
+    if(item.name.startsWith('Review:')) return item.name;
+    const prefix = withSurahNumbers ? `${formatSurahNumber(passageSurahNumber(reading, idx))} ` : '';
+    return `${prefix}${item.name} ${item.start}–${item.end}`;
+  }).join(joiner);
+}
+function passageTitleNumbered(reading){
+  return passageTitle(reading, { withSurahNumbers: true, joiner: ' & ' });
+}
 function addSalawat(text='') {
   // Keep the reading summaries respectful without changing Qur'an translation text.
   return String(text)
@@ -214,7 +227,7 @@ function renderCurrent(){
   $('aboutReadingPanel').classList.remove('hidden');
   $('completionCard').classList.add('hidden');
   $('readingTitle').textContent=`Reading ${reading.id} of ${readings.length}`;
-  $('passageList').innerHTML=reading.passages.map(item=>`<div class="passage"><h3>${item.name}</h3>${item.name.startsWith('Review:')?'':`<p>${item.start} – ${item.end}</p>`}</div>`).join('');
+  $('passageList').innerHTML=reading.passages.map((item, idx)=>`<div class="passage"><h3>${item.name.startsWith('Review:') ? item.name : `${formatSurahNumber(passageSurahNumber(reading, idx))} ${item.name}`}</h3>${item.name.startsWith('Review:')?'':`<p>${item.start} – ${item.end}</p>`}</div>`).join('');
   $('readingTheme').textContent=reading.theme; $('readingDescription').innerHTML=addSalawat(reading.description); $('currentMetrics').innerHTML=metricHtml(reading); $('quranLink').href=quranUrl(reading);
   $('completeBtn').innerHTML=`<span id="completeBox">${isCompleted(reading.id)?'☑':'☐'}</span> ${isCompleted(reading.id)?'Completed':'Mark Complete'}`;
 }
@@ -225,20 +238,20 @@ function renderCompletionAck(){
   $('aboutReadingPanel').classList.add('hidden');
   $('completionCard').classList.remove('hidden');
   $('readingTitle').textContent = `Reading ${next.id} of ${readings.length}`;
-  $('completedSummary').innerHTML = `Reading <strong>${done.id}</strong>, <strong>${passageTitle(done)}</strong>, has been marked complete.`;
-  $('nextPreview').innerHTML = `<h3>Reading ${next.id}</h3><p class="subtle">${passageTitle(next)}</p><p class="theme">${next.theme}</p><div class="metrics centered-metrics">${metricHtml(next)}</div>`;
+  $('completedSummary').innerHTML = `Reading <strong>${done.id}</strong>, <strong>${passageTitleNumbered(done)}</strong>, has been marked complete.`;
+  $('nextPreview').innerHTML = `<h3>Reading ${next.id}</h3><p class="subtle">${passageTitleNumbered(next)}</p><p class="theme">${next.theme}</p><div class="metrics centered-metrics">${metricHtml(next)}</div>`;
   $('beginNextBtn').textContent = done.id === readings.length ? 'Start New Cycle' : (next.id === done.id ? 'Return to Reading' : `Begin Reading ${next.id}`);
 }
 function renderHome(){
   const reading=currentReading(); const pct=Math.round((state.completed.size/readings.length)*100);
-  $('homeReadingTitle').textContent=`Reading ${reading.id} of ${readings.length}`; $('homePassageTitle').textContent=passageTitle(reading); $('homeMetrics').innerHTML=metricHtml(reading); $('heroBar').style.width=`${pct}%`;
+  $('homeReadingTitle').textContent=`Reading ${reading.id} of ${readings.length}`; $('homePassageTitle').textContent=passageTitleNumbered(reading); $('homeMetrics').innerHTML=metricHtml(reading); $('heroBar').style.width=`${pct}%`;
   renderJump();
 }
 function updateProgress(){
   const done=state.completed.size,total=readings.length,pct=Math.round((done/total)*100),degrees=pct*3.6;
   ['sidePercent','bigPercent'].forEach(id=>$(id).textContent=`${pct}%`); $('progressText').textContent=`${done} of ${total} readings completed`; $('bigProgressText').textContent=`${done} of ${total} readings completed`; ['sideRing','bigRing'].forEach(id=>$(id).style.background=`conic-gradient(var(--green) ${degrees}deg, #e4e3df ${degrees}deg)`);
   $('completedStat').textContent=done; $('remainingStat').textContent=total-done; $('currentStat').textContent=state.current; $('cycleStat').textContent=state.cycle; $('sideCompleted').textContent=done; $('sideRemaining').textContent=total-done; $('cycleTitle').textContent=`Cycle ${state.cycle}`; $('cycleDetails').textContent=`Reading ${state.current} of ${total}`;
-  const next=readings[Math.min(total-1,state.current)]; $('nextBadge').textContent=next.id; $('upNextTitle').textContent=passageTitle(next); $('upNextTheme').textContent=next.theme;
+  const next=readings[Math.min(total-1,state.current)]; $('nextBadge').textContent=next.id; $('upNextTitle').textContent=passageTitleNumbered(next); $('upNextTheme').textContent=next.theme;
 }
 function renderReadings(){
   const rows=readings.filter(r=> state.filter==='completed'?isCompleted(r.id):state.filter==='remaining'?!isCompleted(r.id):true);
@@ -248,8 +261,8 @@ function renderReadings(){
       <span class="custom-check">${isCompleted(r.id)?'✓':'○'}</span>
     </label>
     <button class="reading-row-main" data-id="${r.id}">
-      <span class="reading-num">${r.id}</span>
-      <span><strong>${passageTitle(r)}</strong><small>${r.theme} • ${r.minutes} • ${r.ayat} āyāt</small></span>
+      <span class="reading-num"><small>Reading</small><strong>${r.id}</strong></span>
+      <span><strong>${passageTitleNumbered(r)}</strong><small>${r.theme} • ${r.minutes} • ${r.ayat} āyāt</small></span>
     </button>
   </div>`).join('');
   document.querySelectorAll('.reading-row-main').forEach(row=>row.addEventListener('click',()=>{state.current=Number(row.dataset.id);save();showView('current');renderAll();}));
@@ -266,21 +279,21 @@ function matchReading(reading,q){
   if(/^\d+$/.test(s)) return reading.id===Number(s);
   const plus=s.match(/^(\d+)\+$/); if(plus) return reading.id>=Number(plus[1]);
   const range=s.match(/^(\d+)\s*-\s*(\d+)$/); if(range) return reading.id>=Number(range[1]) && reading.id<=Number(range[2]);
-  return `${reading.id} ${passageTitle(reading)} ${reading.theme} ${reading.description}`.toLowerCase().includes(s);
+  return `${reading.id} ${passageTitle(reading)} ${passageTitleNumbered(reading)} ${reading.theme} ${reading.description}`.toLowerCase().includes(s);
 }
 function renderJump(){
   const rows=readings.filter(r=>matchReading(r,state.query));
   if(!rows.find(r=>r.id===state.selectedJump)) state.selectedJump=(rows[0]||readings[0]).id;
   const resultLabel = state.query.trim() ? `${rows.length} matching reading${rows.length===1?'':'s'}` : `All ${readings.length} readings`;
   $('jumpResults').innerHTML = rows.length
-    ? `<p class="results-label">${resultLabel}</p>` + rows.map(r=>`<button class="jump-row ${r.id===state.selectedJump?'active':''}" data-id="${r.id}"><span class="num">${r.id}</span><span><strong>${passageTitle(r)}</strong><small>${r.theme}</small></span><span>${r.minutes}</span></button>`).join('')
+    ? `<p class="results-label">${resultLabel}</p>` + rows.map(r=>`<button class="jump-row ${r.id===state.selectedJump?'active':''}" data-id="${r.id}"><span class="num"><small>Reading</small><strong>${r.id}</strong></span><span><strong>${passageTitleNumbered(r)}</strong><small>${r.theme}</small></span><span>${r.minutes}</span></button>`).join('')
     : `<p class="subtle">No readings matched your search.</p>`;
   document.querySelectorAll('.jump-row').forEach(btn=>btn.addEventListener('click',()=>{state.selectedJump=Number(btn.dataset.id);renderJump();}));
   renderJumpPreview();
 }
 function renderJumpPreview(){
   const r=readings[state.selectedJump-1] || readings[0];
-  $('jumpPreview').innerHTML=`<p class="eyebrow">Reading ${r.id}</p><h3>${passageTitle(r)}</h3><p class="subtle">${r.theme}</p><div class="metrics">${metricHtml(r)}</div><button class="primary-btn" id="setStartBtn">Set as Current Reading</button><button class="soft-btn preview-read-btn" id="previewReadBtn">Read in App</button><a class="soft-link-btn" href="${quranUrl(r)}" target="_blank" rel="noopener">Open casually on Quran.com</a>`;
+  $('jumpPreview').innerHTML=`<p class="eyebrow">Reading ${r.id}</p><h3>${passageTitleNumbered(r)}</h3><p class="subtle">${r.theme}</p><div class="metrics">${metricHtml(r)}</div><button class="primary-btn" id="setStartBtn">Set as Current Reading</button><button class="soft-btn preview-read-btn" id="previewReadBtn">Read in App</button><a class="soft-link-btn" href="${quranUrl(r)}" target="_blank" rel="noopener">Open casually on Quran.com</a>`;
   $('setStartBtn').addEventListener('click',()=>setStartingReading(r.id));
   $('previewReadBtn').addEventListener('click',()=>openReader(r.id,{casual:true}));
 }
@@ -326,7 +339,7 @@ function renderHistory(){
     </div>
     <dl class="history-details">
       <div><dt>Current Reading</dt><dd>Reading ${state.current} of ${readings.length}</dd></div>
-      <div><dt>Current Passage</dt><dd>${passageTitle(current)}</dd></div>
+      <div><dt>Current Passage</dt><dd>${passageTitleNumbered(current)}</dd></div>
       <div><dt>Read in This Cycle</dt><dd>${completedCount} reading${completedCount===1?'':'s'}</dd></div>
     </dl>
     <div class="history-actions centered-actions">
@@ -377,7 +390,6 @@ async function fetchSurahText(surahNumber){
   surahCache.set(surahNumber,combined);
   return combined;
 }
-function passageSurahNumber(reading, passageIndex){ return reading.quranSurah + passageIndex; }
 async function loadReadingText(reading){
   const groups=[];
   for(const [idx,passage] of reading.passages.entries()){
@@ -385,7 +397,7 @@ async function loadReadingText(reading){
     const surahNumber=passageSurahNumber(reading,idx);
     const ayahs=await fetchSurahText(surahNumber);
     groups.push({
-      title:`${passage.name} ${passage.start}–${passage.end}`,
+      title:`${formatSurahNumber(surahNumber)} ${passage.name} ${passage.start}–${passage.end}`,
       surahName: passage.name,
       surahNumber,
       ayahs:ayahs.filter(a=>a.numberInSurah>=passage.start && a.numberInSurah<=passage.end)
@@ -434,15 +446,15 @@ function readerReading(){ return readings[(state.readerReadingId || state.curren
 function renderReaderShell(){
   const reading=readerReading();
   $('readerModalTitle').textContent=`Reading ${reading.id} of ${readings.length}`;
-  $('readerSubtitle').textContent=`${passageTitle(reading)} • ${reading.minutes} • ${reading.ayat} āyāt`; 
+  $('readerSubtitle').textContent=`${passageTitleNumbered(reading)} • ${reading.minutes} • ${reading.ayat} āyāt`; 
   $('readerPositionPill').textContent=`Reading ${reading.id} of ${readings.length}`;
   $('readerQuranLink').href=quranUrl(reading);
   const prevReading = readings[reading.id - 2];
   const nextReading = readings[reading.id];
   $('readerPrevBtn').disabled = reading.id <= 1;
   $('readerNextBtn').disabled = reading.id >= readings.length;
-  if ($('readerPrevLabel')) $('readerPrevLabel').textContent = prevReading ? passageTitle(prevReading) : 'Beginning of cycle';
-  if ($('readerNextLabel')) $('readerNextLabel').textContent = nextReading ? passageTitle(nextReading) : 'End of cycle';
+  if ($('readerPrevLabel')) $('readerPrevLabel').textContent = prevReading ? passageTitleNumbered(prevReading) : 'Beginning of cycle';
+  if ($('readerNextLabel')) $('readerNextLabel').textContent = nextReading ? passageTitleNumbered(nextReading) : 'End of cycle';
   const isCycleReader = state.readerContext === 'cycle' && reading.id === state.current;
   $('readerCompleteBtn').classList.toggle('hidden', !isCycleReader);
   $('readerCompleteBtn').innerHTML=`<span>${isCompleted(reading.id)?'☑':'☐'}</span> ${isCompleted(reading.id)?'Marked Complete':'Mark Complete'}`;
