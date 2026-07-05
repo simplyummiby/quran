@@ -44,3 +44,16 @@
   - Two Pages a Day
   - 120 Day Plan
 - Renamed Complete Qur'an to 120 Day Plan.
+
+## v0.13.1
+
+### Changed
+- Elevated the home dashboard styling toward the refined green-and-gold visual direction.
+- Added illustrated Qur'an artwork assets for the Current Plan and Current Reading cards.
+- Standardized home card headings with uppercase green labels and gold accent lines.
+- Reduced the Current Plan title size and preserved plan details such as pages, readings, and days.
+- Restyled the desktop sidebar with a deep green background and cohesive navigation presentation.
+- Reworked Progress and Current Streak cards for a more polished centered statistic-card style.
+
+### Notes
+- This release focuses on visual polish and responsive scaling, not reading-plan logic changes.

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quran Reading Companion v0.13.0</title>
+  <title>Quran Reading Companion v0.13.1</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Scheherazade+New:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -36,6 +36,13 @@
 
     <main class="layout">
       <aside class="sidebar">
+        <div class="sidebar-brand" aria-label="Quran Reading Companion">
+          <div class="sidebar-logo" aria-hidden="true">
+            <img src="assets/icons/book-open.svg" alt="">
+          </div>
+          <strong>Qur’an</strong>
+          <span>Reading Companion</span>
+        </div>
         <button class="nav-item active" data-view="home"><img class="nav-icon" src="assets/icons/home.svg" alt="" aria-hidden="true"><span>Home</span></button>
         <button class="nav-item" data-view="current"><img class="nav-icon" src="assets/icons/book-open.svg" alt="" aria-hidden="true"><span>Current Reading</span></button>
         <button class="nav-item" data-view="readings"><img class="nav-icon" src="assets/icons/clipboard-list.svg" alt="" aria-hidden="true"><span>Current Plan</span></button>
@@ -59,11 +66,12 @@
 
           <section class="plan-home-card" aria-label="Current reading plan">
             <div class="current-plan-display" id="currentPlanCard">
-              <span class="plan-icon" id="currentPlanIcon" aria-hidden="true">📖</span>
+              <span class="plan-art plan-art-stand" aria-hidden="true"><img src="assets/images/quran-stand.svg" alt=""></span>
               <span class="current-plan-copy">
                 <small>Current Plan</small>
                 <strong id="currentPlanName">120 Day Plan</strong>
-                <em id="currentPlanCount">120 Readings</em>
+                <em id="currentPlanDescription">Complete the Qur'an in about 4 months.</em>
+                <span class="plan-detail-row" id="currentPlanDetails"></span>
               </span>
               <button class="switch-plan-btn" id="currentPlanBtn" type="button" aria-haspopup="dialog" aria-controls="planModal">⇄ Switch Plan</button>
             </div>
@@ -76,7 +84,7 @@
               <div class="current-reading-section">
                 <p class="eyebrow" id="homeCurrentEyebrow">Current Reading</p>
                 <div class="current-reading-layout">
-                  <div class="current-reading-icon">📖</div>
+                  <div class="current-reading-art" aria-hidden="true"><img src="assets/images/quran-open.svg" alt=""></div>
                   <div>
                     <h3 id="homeReadingTitle">Reading 1 of 120</h3>
                     <p id="homePassageTitle" class="home-passage-title"></p>

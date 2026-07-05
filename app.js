@@ -642,16 +642,25 @@ function renderCompletionAck(){
   $('nextPreview').innerHTML = `<h3>${isPageReading(next) ? pageRangeText(next) : (schedule.id === 'complete' ? `Reading ${next.id}` : `${formatSurahNumber(next.quranSurah)} ${next.passages[0].name}`)}</h3><p class="subtle">${isPageReading(next) ? `Reading ${next.id} of ${readings.length}` : passageTitleNumbered(next)}</p><p class="theme">${next.theme}</p><div class="metrics centered-metrics">${metricHtml(next)}</div>`;
   $('beginNextBtn').textContent = done.id === readings.length ? `Start ${schedule.name} Again` : (next.id === done.id ? 'Return to Reading' : `Begin ${schedule.itemLabel} ${schedule.id === 'complete' ? next.id : next.quranSurah}`);
 }
+function planDetailItems(schedule){
+  if(schedule.id === 'twoPages') return [{icon:'clipboard-list', value:'604', label:'Pages'}, {icon:'book-open', value:'302', label:'Readings'}, {icon:'chart', value:'302', label:'Days'}];
+  if(schedule.id === 'complete') return [{icon:'clipboard-list', value:'604', label:'Pages'}, {icon:'book-open', value:'120', label:'Readings'}, {icon:'chart', value:'120', label:'Days'}];
+  return [{icon:'book-open', value:'37', label:'Surahs'}, {icon:'library', value:'1', label:'Juz'}, {icon:'check-circle', value:'37', label:'Readings'}];
+}
 function renderPlanSelector(){
   const schedule = activeSchedule();
   const card = $('currentPlanCard');
   const icon = $('currentPlanIcon');
   const name = $('currentPlanName');
+  const desc = $('currentPlanDescription');
+  const details = $('currentPlanDetails');
   const count = $('currentPlanCount');
   const btn = $('currentPlanBtn');
   if(card) card.className = `current-plan-display plan-${schedule.accent}`;
   if(icon) icon.textContent = schedule.icon;
   if(name) name.textContent = schedule.name;
+  if(desc) desc.textContent = schedule.description;
+  if(details) details.innerHTML = planDetailItems(schedule).map(item => `<span><img src="assets/icons/${item.icon}.svg" alt="" aria-hidden="true"><strong>${item.value}</strong><small>${item.label}</small></span>`).join('');
   if(count) count.textContent = schedule.countLabel;
   if(btn) btn.className = `switch-plan-btn plan-${schedule.accent}`;
   const note = $('planReassurance');
