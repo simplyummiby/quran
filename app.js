@@ -715,7 +715,7 @@ function renderCompletionAck(){
   const completedLabel = isPageReading(done) ? done.id : (schedule.id === 'complete' ? done.id : done.quranSurah);
   $('completedSummary').innerHTML = `${schedule.itemLabel} <strong>${completedLabel}</strong>, <strong>${passageTitleNumbered(done)}</strong>, has been marked complete.`;
   $('nextPreview').innerHTML = `<h3>${isPageReading(next) ? pageRangeText(next) : (schedule.id === 'complete' ? `Reading ${next.id}` : `${formatSurahNumber(next.quranSurah)} ${next.passages[0].name}`)}</h3><p class="subtle">${isPageReading(next) ? `Reading ${next.id} of ${readings.length}` : passageTitleNumbered(next)}</p><p class="theme">${next.theme}</p><div class="metrics centered-metrics">${metricHtml(next)}</div>`;
-  $('beginNextBtn').textContent = done.id === readings.length ? `Start ${schedule.name} Again` : (next.id === done.id ? 'Return to Reading' : `Begin ${schedule.itemLabel} ${schedule.id === 'complete' ? next.id : next.quranSurah}`);
+  $('beginNextBtn').textContent = done.id === readings.length ? `Start ${schedule.name} Again` : 'Go to Next Reading';
 }
 function planDetailItems(schedule){
   if(schedule.id === 'twoPages') return [{icon:'clipboard-list', value:'604', label:'Pages'}, {icon:'book-open', value:'302', label:'Readings'}, {icon:'chart', value:'302', label:'Days'}];
@@ -1586,7 +1586,17 @@ function renderBackupTip(){
 function renderAll(){ renderCurrent(); renderHome(); renderReadings(); renderHistory(); renderBackupPage(); renderBackupTip(); updateProgress(); renderStartCycleCard(); renderPlanSelector(); renderResetControls(); }
 
 $('completeBtn')?.addEventListener('click',markCurrentComplete);
-$('beginNextBtn')?.addEventListener('click',()=>{ if(state.completionAck && state.completionAck.completedId===readings.length){ startNewCycle({recordCompleted:true}); return; } state.completionAck=null; save(); renderAll(); });
+$('beginNextBtn')?.addEventListener('click',()=>{
+  if(state.completionAck && state.completionAck.completedId===readings.length){
+    startNewCycle({recordCompleted:true});
+    return;
+  }
+  state.completionAck=null;
+  state.previewReadingId=null;
+  save();
+  renderAll();
+  showView('current');
+});
 $('undoCompleteBtn')?.addEventListener('click',undoLastCompletion);
 $('prevBtn')?.addEventListener('click',()=>{state.completionAck=null;state.previewReadingId=Math.max(1,(state.previewReadingId || state.current)-1);renderAll();}); $('nextBtn')?.addEventListener('click',()=>{state.completionAck=null;state.previewReadingId=Math.min(readings.length,(state.previewReadingId || state.current)+1);renderAll();}); $('upNextBtn')?.addEventListener('click',()=>{viewReadingInfo(Math.min(readings.length,state.current+1));});
 $('startNewCycleBtn')?.addEventListener('click',()=>startNewCycle());

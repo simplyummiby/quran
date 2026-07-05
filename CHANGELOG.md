@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.16.3
+- Fixed the completion screen button after marking a reading complete.
+- Button now says **Go to Next Reading** instead of falling back to Reading 1 on plans like Two Pages a Day.
+- The button now returns to the actual bookmarked next reading.
+
 ## v0.16.2
 - Polish pass after adding the 30 Day Plan.
 - Kept My Schedule browsing from moving the bookmark accidentally.
