@@ -657,7 +657,27 @@ function renderPlanSelector(){
   const note = $('planReassurance');
   if(note) note.textContent = 'Each plan keeps its own progress, so you can switch anytime without losing your place.';
 }
+function hasAnySavedProgress(){
+  const plans = { ...(planProgress || {}) };
+  plans[activePlanId] = {
+    current: state.current,
+    completed: [...state.completed],
+    history: state.history,
+    cycle: state.cycle
+  };
+  return Object.values(plans).some(progress => {
+    if(!progress) return false;
+    const completed = Array.isArray(progress.completed) ? progress.completed.length : 0;
+    const history = Array.isArray(progress.history) ? progress.history.length : 0;
+    return Number(progress.current || 1) > 1 || completed > 0 || history > 0 || Number(progress.cycle || 1) > 1;
+  });
+}
+function renderWelcome(){
+  const heading = $('welcomeHeading');
+  if(heading) heading.textContent = hasAnySavedProgress() ? 'Welcome Back' : 'Welcome';
+}
 function renderHome(){
+  renderWelcome();
   const schedule = activeSchedule();
   const reading=currentReading(); const pct=Math.round((state.completed.size/readings.length)*100);
   const degrees = pct * 3.6;

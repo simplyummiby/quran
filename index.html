@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quran Reading Companion v0.12.6</title>
+  <title>Quran Reading Companion v0.12.7</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Scheherazade+New:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -14,18 +14,12 @@
     <header class="topbar">
       <button class="mobile-menu-toggle" id="mobileMenuToggle" type="button" aria-label="Open menu" aria-controls="mobileMenuPanel" aria-expanded="false">☰</button>
       <div class="brand">
-        <div class="brand-icon" aria-hidden="true">📖</div>
         <div>
           <h1>Quran Reading Companion</h1>
           <p class="brand-byline">by Simply Ummiby</p>
           <p class="brand-tagline">Steady steps, lasting reward.</p>
         </div>
       </div>
-      <nav class="top-actions" aria-label="Top navigation">
-        <button class="ghost-btn" data-view="readings">Browse Schedule</button>
-        <button class="ghost-btn" data-view="progress">Progress</button>
-        <button class="ghost-btn" data-view="history">Completed Cycles</button>
-      </nav>
     </header>
 
     <div class="mobile-menu-backdrop hidden" id="mobileMenuBackdrop"></div>
@@ -60,11 +54,7 @@
       <section class="content" id="homeView">
         <div class="home-dashboard-head">
           <div class="welcome home-welcome">
-            <div>
-              <h2>Welcome back!</h2>
-              <p class="subtle">May Allah make our Qur'an a light in our hearts.</p>
-            </div>
-            <div class="flourish">✤</div>
+            <h2 id="welcomeHeading">Welcome</h2>
           </div>
 
           <section class="plan-home-card" aria-label="Current reading plan">
