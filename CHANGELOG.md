@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.13.2
+- Removed the decorative ornament/image under Welcome/Welcome Back.
+- Updated the phone header to match the refined green-and-gold visual direction used by the sidebar on larger screens.
+- Kept desktop and tablet layouts unchanged from v0.13.1.
+
+
 ## v0.13.0 — Responsive Redesign & Navigation Polish
 
 - Established a clearer responsive layout system:

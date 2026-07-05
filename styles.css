@@ -3260,3 +3260,50 @@ body {
   .current-reading-section .eyebrow::after, .upcoming-section h3::after { margin-left:0; }
   .right-panel { padding-top:0 !important; }
 }
+
+
+/* v0.13.2: phone header consistency + remove welcome ornament */
+.home-welcome::after {
+  display: none !important;
+  content: none !important;
+}
+
+@media (max-width: 760px) {
+  .topbar {
+    background: linear-gradient(180deg, #053828 0%, #064934 100%) !important;
+    border-bottom: 1px solid rgba(212,166,78,.45) !important;
+    box-shadow: 0 12px 30px rgba(7,36,28,.18) !important;
+    color: #fff8e8 !important;
+  }
+  .mobile-menu-toggle {
+    background: rgba(255,255,255,.08) !important;
+    border: 1px solid rgba(212,166,78,.62) !important;
+    box-shadow: none !important;
+  }
+  .mobile-menu-toggle img {
+    filter: brightness(0) saturate(100%) invert(83%) sepia(41%) saturate(569%) hue-rotate(358deg) brightness(91%) contrast(89%) !important;
+  }
+  .topbar .brand h1 {
+    color: #fff8e8 !important;
+    font-family: var(--font-display) !important;
+    font-size: clamp(1.48rem, 6.5vw, 2.05rem) !important;
+    line-height: .96 !important;
+    letter-spacing: .015em !important;
+  }
+  .topbar .brand-byline {
+    color: #f0cf86 !important;
+    font-family: var(--font-reading) !important;
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    font-size: .72rem !important;
+    margin-top: 5px !important;
+  }
+  .topbar .brand-tagline {
+    color: rgba(255,248,232,.86) !important;
+    font-size: .76rem !important;
+    margin-top: 4px !important;
+  }
+  .mobile-menu-panel {
+    background: #fffdf8 !important;
+  }
+}
