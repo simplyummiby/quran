@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.16.2
+- Polish pass after adding the 30 Day Plan.
+- Kept My Schedule browsing from moving the bookmark accidentally.
+- Added Set as Current / 📍 Current controls to My Schedule rows for consistency with the schedule modal.
+- Updated remaining reset wording to Start This Plan Over.
+- Cleaned up remaining Full Schedule/Browse Schedule wording to My Schedule.
+
 ## v0.16.1
 - Hotfix: Updated the 30 Day Plan with proper juz surah/ayah boundaries.
 - Reading Mode now loads 30 Day Plan readings using surah ranges instead of relying on page-only loading.

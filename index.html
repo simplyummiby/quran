@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quran Reading Companion v0.16.1</title>
+  <title>Quran Reading Companion v0.16.2</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Scheherazade+New:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -211,7 +211,7 @@
               <p id="homeProgressText">0 readings completed</p>
               <div class="mini-bar"><span id="homeMiniBar"></span></div>
               <p class="subtle" id="homeProgressEncouragement">Keep going!</p>
-              <button class="progress-reset-btn" id="homeResetPlanBtn" type="button">Reset Plan</button>
+              <button class="progress-reset-btn" id="homeResetPlanBtn" type="button">Start This Plan Over</button>
               <button class="progress-reset-btn start-cycle-progress-btn hidden" id="homeStartNewCycleBtn" type="button">Start New Cycle</button>
             </div>
           </div>
@@ -232,7 +232,7 @@
   <div class="modal-backdrop hidden" id="browseScheduleModal" role="dialog" aria-modal="true" aria-labelledby="browseScheduleTitle">
     <div class="modal-card browse-modal-card">
       <button class="modal-close" id="closeBrowseScheduleModal" aria-label="Close schedule browser">×</button>
-      <p class="eyebrow" id="browseScheduleEyebrow">Browse Schedule</p>
+      <p class="eyebrow" id="browseScheduleEyebrow">My Schedule</p>
       <h2 id="browseScheduleTitle">120 Day Plan</h2>
       <p id="browseScheduleNote" class="subtle">Choose any reading to make it your current place. Completed progress stays saved.</p>
       <label class="search-box browse-modal-search" for="browseScheduleSearch">⌕
@@ -240,7 +240,7 @@
       </label>
       <div id="browseScheduleList" class="browse-schedule-list"></div>
       <div class="browse-modal-footer">
-        <button class="ghost-outline danger-soft" id="resetPlanProgressBtn" type="button">Reset This Plan’s Progress</button>
+        <button class="ghost-outline danger-soft" id="resetPlanProgressBtn" type="button">Start This Plan Over</button>
       </div>
     </div>
   </div>

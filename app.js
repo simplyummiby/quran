@@ -850,21 +850,27 @@ function readingRowSmallHtml(reading){
 function renderReadings(){
   const schedule = activeSchedule();
   const eyebrow = document.querySelector('#readingsView .section-heading .eyebrow');
-  if(eyebrow) eyebrow.textContent = 'Full Schedule';
+  if(eyebrow) eyebrow.textContent = 'My Schedule';
   const heading = document.querySelector('#readingsView .section-heading h2');
   if(heading) heading.textContent = schedule.name;
   const rows=readings.filter(r=> state.filter==='completed'?isCompleted(r.id):state.filter==='remaining'?!isCompleted(r.id):true);
-  $('allReadings').innerHTML=rows.map(r=>`<div class="reading-row ${isCompleted(r.id)?'completed':''}" data-id="${r.id}">
+  $('allReadings').innerHTML=rows.map(r=>`<div class="reading-row ${r.id===state.current?'active':''} ${isCompleted(r.id)?'completed':''}" data-id="${r.id}">
     <label class="reading-check-wrap" title="Mark this ${schedule.unitSingular} complete or incomplete">
       <input class="reading-check-input" type="checkbox" data-id="${r.id}" ${isCompleted(r.id)?'checked':''} />
       <span class="custom-check">${isCompleted(r.id)?'✓':'○'}</span>
     </label>
-    <button class="reading-row-main" data-id="${r.id}">
+    <button class="reading-row-main" data-id="${r.id}" type="button">
       ${readingNumberBadge(r)}
-      <span><strong>${passageTitleNumbered(r)}</strong>${r.id===state.current?'<small class="current-marker">📍 Current Reading</small>':''}${readingRowSmallHtml(r)}</span>
+      <span><strong>${passageTitleNumbered(r)}</strong>${readingRowSmallHtml(r)}</span>
     </button>
+    ${r.id===state.current ? '<span class="browse-row-current current-badge" aria-label="Current reading">📍 Current</span>' : `<button class="browse-row-current set-current-pill" data-set-current-reading="${r.id}" type="button" title="Set as current ${schedule.unitSingular}">Set as Current</button>`}
   </div>`).join('');
-  document.querySelectorAll('.reading-row-main').forEach(row=>row.addEventListener('click',()=>{state.current=Number(row.dataset.id);save();showView('current');renderAll();}));
+  document.querySelectorAll('.reading-row-main').forEach(row=>row.addEventListener('click',()=>viewReadingInfo(Number(row.dataset.id))));
+  document.querySelectorAll('[data-set-current-reading]').forEach(btn=>btn.addEventListener('click',event=>{
+    event.preventDefault();
+    event.stopPropagation();
+    setStartingReading(Number(btn.dataset.setCurrentReading));
+  }));
   document.querySelectorAll('.reading-check-input').forEach(box=>box.addEventListener('change',()=>toggleReadingComplete(Number(box.dataset.id), box.checked)));
 }
 function toggleReadingComplete(id, checked){
@@ -1352,7 +1358,7 @@ function currentPlanHasResettableProgress(){
   return state.current > 1 || state.completed.size > 0 || Object.keys(state.readerScroll || {}).some(key => key.startsWith(`${activePlanId}:`));
 }
 function resetButtonLabel(schedule = activeSchedule()){
-  return 'Reset This Plan';
+  return 'Start This Plan Over';
 }
 function renderResetControls(){
   const schedule = activeSchedule();

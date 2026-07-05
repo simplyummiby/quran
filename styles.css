@@ -3665,3 +3665,26 @@ body {
   .plan-card-actions { display: grid; }
   .plan-switch-btn, .plan-restart-btn { width: 100%; }
 }
+
+/* v0.16.2 My Schedule polish */
+.reading-row.active {
+  background: linear-gradient(90deg, rgba(232,241,223,.95), rgba(255,253,248,.95));
+  border-color: #cfe2cb;
+}
+.reading-row .browse-row-current {
+  align-self: center;
+  margin-right: 12px;
+  flex: 0 0 132px;
+}
+@media (max-width: 760px){
+  .reading-row {
+    flex-wrap: wrap;
+  }
+  .reading-row .browse-row-current {
+    order: 3;
+    flex-basis: calc(100% - 64px);
+    margin: 0 12px 12px 62px;
+    justify-self: stretch;
+    width: auto;
+  }
+}
