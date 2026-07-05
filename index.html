@@ -68,27 +68,6 @@
         </div>
 
         <div class="home-dashboard-grid">
-          <section class="home-panel progress-home-card">
-            <h3>Overall Progress</h3>
-            <div class="home-progress-layout">
-              <div class="ring" id="homeRing"><span id="homePercent">0%</span></div>
-              <div>
-                <p id="homeProgressText">0 readings completed</p>
-                <div class="mini-bar"><span id="homeMiniBar"></span></div>
-                <p class="subtle" id="homeProgressEncouragement">Keep going!</p>
-                <button class="progress-reset-btn" id="homeResetPlanBtn" type="button">Reset Plan</button>
-              </div>
-            </div>
-            <div class="mini-flourish">✤</div>
-          </section>
-
-          <section class="home-panel streak-card">
-            <h3>Current Streak</h3>
-            <div class="streak-main"><span class="streak-icon">🔥</span><strong id="streakCount">0</strong><span>days</span></div>
-            <p class="subtle" id="streakMessage">Keep going!</p>
-            <div class="streak-dots" id="streakDots" aria-label="Recent reading activity"></div>
-          </section>
-
           <section class="home-panel current-upcoming-card">
             <div class="current-upcoming-main">
               <div class="current-reading-section">
@@ -186,12 +165,26 @@
         </div>
       </section>
 
-      <aside class="right-panel">
-        <div class="panel-card plan-progress-card">
-          <p class="eyebrow">📖 Current Plan Progress</p>
-          <div id="planProgressRows" class="plan-progress-rows"></div>
-        </div>
+      <aside class="right-panel" aria-label="Reading progress summary">
+        <section class="home-panel progress-home-card sidebar-progress-card">
+          <h3>Progress</h3>
+          <div class="home-progress-layout">
+            <div class="ring" id="homeRing"><span id="homePercent">0%</span></div>
+            <div>
+              <p id="homeProgressText">0 readings completed</p>
+              <div class="mini-bar"><span id="homeMiniBar"></span></div>
+              <p class="subtle" id="homeProgressEncouragement">Keep going!</p>
+              <button class="progress-reset-btn" id="homeResetPlanBtn" type="button">Reset Plan</button>
+            </div>
+          </div>
+        </section>
 
+        <section class="home-panel streak-card sidebar-streak-card">
+          <h3>Current Streak</h3>
+          <div class="streak-main"><strong id="streakCount">0</strong><span>days</span></div>
+          <p class="subtle" id="streakMessage">Keep going!</p>
+          <div class="streak-dots" id="streakDots" aria-label="Recent reading activity"></div>
+        </section>
       </aside>
     </main>
   </div>
