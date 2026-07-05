@@ -674,7 +674,7 @@ function hasAnySavedProgress(){
 }
 function renderWelcome(){
   const heading = $('welcomeHeading');
-  if(heading) heading.textContent = hasAnySavedProgress() ? 'Welcome Back' : 'Welcome';
+  if(heading) heading.textContent = hasAnySavedProgress() ? 'Welcome Back!' : 'Welcome!';
 }
 function renderHome(){
   renderWelcome();
@@ -1221,7 +1221,7 @@ function currentPlanHasResettableProgress(){
   return state.current > 1 || state.completed.size > 0 || Object.keys(state.readerScroll || {}).some(key => key.startsWith(`${activePlanId}:`));
 }
 function resetButtonLabel(schedule = activeSchedule()){
-  return schedule.id === 'complete' ? 'Reset 120 Day Plan' : `Reset ${schedule.name}`;
+  return 'Reset This Plan';
 }
 function renderResetControls(){
   const schedule = activeSchedule();

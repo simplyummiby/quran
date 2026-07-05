@@ -2744,3 +2744,84 @@ h3,
     font-size: clamp(2.15rem, 10vw, 3rem);
   }
 }
+
+
+/* v0.12.8: header, tablet navigation, welcome, and reset wording polish */
+/* Keep the reading-first welcome layout on every device. */
+.home-dashboard-head {
+  grid-template-columns: 1fr !important;
+  justify-items: center !important;
+  text-align: center !important;
+}
+.home-dashboard-head .home-welcome {
+  grid-row: 1 !important;
+  width: 100% !important;
+  text-align: center !important;
+  margin: 0 auto !important;
+}
+.home-dashboard-head .plan-home-card {
+  grid-row: 2 !important;
+  width: min(620px, 100%) !important;
+  margin: 0 auto !important;
+}
+
+/* Tablet and phone should use the hamburger menu; desktop keeps the left sidebar. */
+@media (max-width: 1180px){
+  .topbar {
+    grid-template-columns: 46px minmax(0, 1fr) 46px !important;
+    min-height: 92px;
+    padding: 12px 18px;
+  }
+  .mobile-menu-toggle {
+    display: grid !important;
+    place-items: center !important;
+    grid-column: 1 !important;
+    justify-self: start !important;
+  }
+  .brand {
+    grid-column: 2 !important;
+    justify-self: center !important;
+    text-align: center !important;
+  }
+  .layout {
+    grid-template-columns: minmax(0, 1fr) 330px !important;
+    gap: 24px !important;
+  }
+  .layout > .sidebar {
+    display: none !important;
+  }
+  .right-panel {
+    grid-column: 2 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .content {
+    grid-column: 1 !important;
+  }
+  .home-dashboard-head {
+    margin-top: 12px !important;
+  }
+}
+
+@media (min-width: 1181px){
+  .mobile-menu-toggle,
+  .mobile-menu-panel,
+  .mobile-menu-backdrop {
+    display: none !important;
+  }
+  .layout > .sidebar {
+    display: flex !important;
+  }
+}
+
+@media (max-width: 900px){
+  .layout {
+    display: block !important;
+    padding-top: 14px;
+  }
+  .right-panel {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    margin-top: 18px;
+  }
+}
