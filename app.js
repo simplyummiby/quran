@@ -183,6 +183,60 @@ const twoPagesDailyReadings = Array.from({ length: 302 }, (_, index) => {
   return pageReading(index + 1, pageStart, pageEnd);
 });
 
+const juzStartPages = [1,22,42,62,82,102,121,142,162,182,201,222,242,262,282,302,322,342,362,382,402,422,442,462,482,502,522,542,562,582];
+const juzBoundaries = [
+  [[1,'Al-Fatihah',1,7],[2,'Al-Baqarah',1,141]],
+  [[2,'Al-Baqarah',142,252]],
+  [[2,'Al-Baqarah',253,286],[3,'Aal ‘Imran',1,92]],
+  [[3,'Aal ‘Imran',93,200],[4,'An-Nisa',1,23]],
+  [[4,'An-Nisa',24,147]],
+  [[4,'An-Nisa',148,176],[5,'Al-Ma’idah',1,81]],
+  [[5,'Al-Ma’idah',82,120],[6,'Al-An‘am',1,110]],
+  [[6,'Al-An‘am',111,165],[7,'Al-A‘raf',1,87]],
+  [[7,'Al-A‘raf',88,206],[8,'Al-Anfal',1,40]],
+  [[8,'Al-Anfal',41,75],[9,'At-Tawbah',1,92]],
+  [[9,'At-Tawbah',93,129],[10,'Yunus',1,109],[11,'Hud',1,5]],
+  [[11,'Hud',6,123],[12,'Yusuf',1,52]],
+  [[12,'Yusuf',53,111],[13,'Ar-Ra‘d',1,43],[14,'Ibrahim',1,52]],
+  [[15,'Al-Hijr',1,99],[16,'An-Nahl',1,128]],
+  [[17,'Al-Isra',1,111],[18,'Al-Kahf',1,74]],
+  [[18,'Al-Kahf',75,110],[19,'Maryam',1,98],[20,'Ta-Ha',1,135]],
+  [[21,'Al-Anbiya',1,112],[22,'Al-Hajj',1,78]],
+  [[23,'Al-Mu’minun',1,118],[24,'An-Nur',1,64],[25,'Al-Furqan',1,20]],
+  [[25,'Al-Furqan',21,77],[26,'Ash-Shu‘ara',1,227],[27,'An-Naml',1,55]],
+  [[27,'An-Naml',56,93],[28,'Al-Qasas',1,88],[29,'Al-‘Ankabut',1,45]],
+  [[29,'Al-‘Ankabut',46,69],[30,'Ar-Rum',1,60],[31,'Luqman',1,34],[32,'As-Sajdah',1,30],[33,'Al-Ahzab',1,30]],
+  [[33,'Al-Ahzab',31,73],[34,'Saba',1,54],[35,'Fatir',1,45],[36,'Ya-Sin',1,27]],
+  [[36,'Ya-Sin',28,83],[37,'As-Saffat',1,182],[38,'Sad',1,88],[39,'Az-Zumar',1,31]],
+  [[39,'Az-Zumar',32,75],[40,'Ghafir',1,85],[41,'Fussilat',1,46]],
+  [[41,'Fussilat',47,54],[42,'Ash-Shura',1,53],[43,'Az-Zukhruf',1,89],[44,'Ad-Dukhan',1,59],[45,'Al-Jathiyah',1,37]],
+  [[46,'Al-Ahqaf',1,35],[47,'Muhammad',1,38],[48,'Al-Fath',1,29],[49,'Al-Hujurat',1,18],[50,'Qaf',1,45],[51,'Adh-Dhariyat',1,30]],
+  [[51,'Adh-Dhariyat',31,60],[52,'At-Tur',1,49],[53,'An-Najm',1,62],[54,'Al-Qamar',1,55],[55,'Ar-Rahman',1,78],[56,'Al-Waqi‘ah',1,96],[57,'Al-Hadid',1,29]],
+  [[58,'Al-Mujadilah',1,22],[59,'Al-Hashr',1,24],[60,'Al-Mumtahanah',1,13],[61,'As-Saff',1,14],[62,'Al-Jumu‘ah',1,11],[63,'Al-Munafiqun',1,11],[64,'At-Taghabun',1,18],[65,'At-Talaq',1,12],[66,'At-Tahrim',1,12]],
+  [[67,'Al-Mulk',1,30],[68,'Al-Qalam',1,52],[69,'Al-Haqqah',1,52],[70,'Al-Ma‘arij',1,44],[71,'Nuh',1,28],[72,'Al-Jinn',1,28],[73,'Al-Muzzammil',1,20],[74,'Al-Muddaththir',1,56],[75,'Al-Qiyamah',1,40],[76,'Al-Insan',1,31],[77,'Al-Mursalat',1,50]],
+  [[78,'An-Naba',1,40],[79,'An-Nazi‘at',1,46],[80,'‘Abasa',1,42],[81,'At-Takwir',1,29],[82,'Al-Infitar',1,19],[83,'Al-Mutaffifin',1,36],[84,'Al-Inshiqaq',1,25],[85,'Al-Buruj',1,22],[86,'At-Tariq',1,17],[87,'Al-A‘la',1,19],[88,'Al-Ghashiyah',1,26],[89,'Al-Fajr',1,30],[90,'Al-Balad',1,20],[91,'Ash-Shams',1,15],[92,'Al-Layl',1,21],[93,'Ad-Duha',1,11],[94,'Ash-Sharh',1,8],[95,'At-Tin',1,8],[96,'Al-‘Alaq',1,19],[97,'Al-Qadr',1,5],[98,'Al-Bayyinah',1,8],[99,'Az-Zalzalah',1,8],[100,'Al-‘Adiyat',1,11],[101,'Al-Qari‘ah',1,11],[102,'At-Takathur',1,8],[103,'Al-‘Asr',1,3],[104,'Al-Humazah',1,9],[105,'Al-Fil',1,5],[106,'Quraysh',1,4],[107,'Al-Ma‘un',1,7],[108,'Al-Kawthar',1,3],[109,'Al-Kafirun',1,6],[110,'An-Nasr',1,3],[111,'Al-Masad',1,5],[112,'Al-Ikhlas',1,4],[113,'Al-Falaq',1,5],[114,'An-Nas',1,6]]
+];
+function jp(surah, name, start, end) { return { surah, name, start, end }; }
+function juzReading(id, pageStart, pageEnd, boundaries){
+  const passages = boundaries.map(item => jp(item[0], item[1], item[2], item[3]));
+  return {
+    id,
+    pageStart,
+    pageEnd,
+    isJuzReading: true,
+    displayTitle: `Juz ${id}`,
+    passages,
+    theme: `Juz ${id}`,
+    description: `Read Juz ${id} of the Qur’an, pages ${pageStart}–${pageEnd}.`,
+    quranSurah: passages[0].surah,
+    quranAyah: passages[0].start,
+    pages: pageEnd - pageStart + 1,
+    ayat: passages.reduce((sum, x) => sum + (x.end - x.start + 1), 0),
+    minutes: ''
+  };
+}
+const thirtyDayReadings = juzStartPages.map((pageStart, index) => juzReading(index + 1, pageStart, index === juzStartPages.length - 1 ? 604 : juzStartPages[index + 1] - 1, juzBoundaries[index]));
+
 const SCHEDULES = {
   juzAmma: {
     id: 'juzAmma',
@@ -195,30 +249,30 @@ const SCHEDULES = {
     itemLabel: 'Surah',
     browseTitle: 'Browse Juz Amma',
     items: juzAmmaSurahs,
-    accent: 'purple',
+    accent: 'green',
     icon: '📘',
     description: 'All 37 surahs from Juz Amma.'
   },
-  twoPages: {
-    id: 'twoPages',
-    name: 'Two Pages a Day',
-    shortName: 'Two Pages a Day',
-    countLabel: '604 Pages • 302 Readings',
+  thirtyDay: {
+    id: 'thirtyDay',
+    name: '30 Day Plan',
+    shortName: '30 Day Plan',
+    countLabel: '30 Readings • 1 Juz per Reading',
     unitSingular: 'reading',
     unitPlural: 'readings',
     currentLabel: 'Current Reading',
     itemLabel: 'Reading',
-    browseTitle: 'Browse Two Pages a Day',
-    items: twoPagesDailyReadings,
-    accent: 'gold',
-    icon: '📄',
-    description: "Complete the Qur’an in 302 days."
+    browseTitle: 'Browse 30 Day Plan',
+    items: thirtyDayReadings,
+    accent: 'green',
+    icon: '📖',
+    description: "Complete the Qur’an in 30 readings."
   },
   complete: {
     id: 'complete',
     name: '120 Day Plan',
     shortName: '120 Day Plan',
-    countLabel: '120 Readings',
+    countLabel: '120 Readings • About 4 Months',
     unitSingular: 'reading',
     unitPlural: 'readings',
     currentLabel: 'Current Reading',
@@ -228,6 +282,21 @@ const SCHEDULES = {
     accent: 'green',
     icon: '📖',
     description: "Complete the Qur’an in about 4 months."
+  },
+  twoPages: {
+    id: 'twoPages',
+    name: 'Two Pages a Day',
+    shortName: 'Two Pages a Day',
+    countLabel: '302 Readings • 302 Days',
+    unitSingular: 'reading',
+    unitPlural: 'readings',
+    currentLabel: 'Current Reading',
+    itemLabel: 'Reading',
+    browseTitle: 'Browse Two Pages a Day',
+    items: twoPagesDailyReadings,
+    accent: 'green',
+    icon: '📄',
+    description: "Complete the Qur’an in 302 days."
   }
 };
 let activePlanId = localStorage.getItem('qrc_active_plan_v09') || 'complete';
@@ -473,13 +542,14 @@ function surahTitleHtml(surahNumber, name, range=''){
   return `<span class="surah-title">${escapeHtml(title)}</span>`;
 }
 function passageSurahNumber(reading, passageIndex){ return reading.quranSurah + passageIndex; }
-function isPageReading(reading){ return reading && Number.isFinite(reading.pageStart) && Number.isFinite(reading.pageEnd); }
-function pageRangeText(reading){ return `Pages ${reading.pageStart}–${reading.pageEnd}`; }
+function isPageReading(reading){ return reading && Number.isFinite(reading.pageStart) && Number.isFinite(reading.pageEnd) && !reading.isJuzReading; }
+function pageRangeText(reading){ return reading.displayTitle || `Pages ${reading.pageStart}–${reading.pageEnd}`; }
 function passageTitle(reading, { withSurahNumbers = false, joiner = ' + ' } = {}){
   if(isPageReading(reading)) return pageRangeText(reading);
   return reading.passages.map((item, idx) => {
     if(item.name.startsWith('Review:')) return item.name;
-    const prefix = withSurahNumbers ? `${formatSurahNumber(passageSurahNumber(reading, idx))} ` : '';
+    const surahNo = item.surah || passageSurahNumber(reading, idx);
+    const prefix = withSurahNumbers ? `${formatSurahNumber(surahNo)} ` : '';
     return `${prefix}${item.name} ${item.start}–${item.end}`;
   }).join(joiner);
 }
@@ -496,7 +566,7 @@ function addSalawat(text='') {
     .replace(/\bthe Prophet\b(?!\s*ﷺ)/gi, match => `${match} ﷺ`)
     .replace(/\bthe Messenger\b(?!\s*ﷺ)/gi, match => `${match} ﷺ`);
 }
-function quranUrl(reading){ return isPageReading(reading) ? `https://quran.com/page/${reading.pageStart}` : `https://quran.com/${reading.quranSurah}?startingVerse=${reading.quranAyah}`; }
+function quranUrl(reading){ return reading && reading.isJuzReading ? `https://quran.com/juz/${reading.id}` : isPageReading(reading) ? `https://quran.com/page/${reading.pageStart}` : `https://quran.com/${reading.quranSurah}?startingVerse=${reading.quranAyah}`; }
 function metricHtml(reading){ if(isPageReading(reading)) return `<span class="metric">📄 <span><strong>${reading.pages} pages</strong><small>In mushaf</small></span></span>`; return `<span class="metric">📖 <span><strong>${reading.ayat} āyāt</strong><small>Approx. length</small></span></span><span class="metric">📄 <span><strong>${reading.pages} pages</strong><small>In mushaf</small></span></span>`; }
 function formatDate(iso){
   if(!iso) return 'Not recorded';
@@ -625,7 +695,7 @@ function renderCurrent(){
   $('aboutReadingPanel').classList.remove('hidden');
   $('completionCard').classList.add('hidden');
   $('readingTitle').textContent = isPageReading(reading) ? `${schedule.name} • Reading ${reading.id} of ${readings.length}` : (schedule.id === 'complete' ? `Reading ${reading.id} of ${readings.length}` : `${schedule.name} • ${formatSurahNumber(reading.quranSurah)} ${reading.passages[0].name}`);
-  $('passageList').innerHTML = isPageReading(reading) ? `<div class="passage page-passage"><h3>${pageRangeText(reading)}</h3><p>Reading ${reading.id} of ${readings.length}</p></div>` : reading.passages.map((item, idx)=>`<div class="passage"><h3>${item.name.startsWith('Review:') ? escapeHtml(item.name) : surahTitleHtml(passageSurahNumber(reading, idx), item.name)}</h3>${item.name.startsWith('Review:')?'':`<p>${item.start} – ${item.end}</p>`}</div>`).join('');
+  $('passageList').innerHTML = isPageReading(reading) ? `<div class="passage page-passage"><h3>${pageRangeText(reading)}</h3><p>Reading ${reading.id} of ${readings.length}</p></div>` : reading.passages.map((item, idx)=>`<div class="passage"><h3>${item.name.startsWith('Review:') ? escapeHtml(item.name) : surahTitleHtml(item.surah || passageSurahNumber(reading, idx), item.name)}</h3>${item.name.startsWith('Review:')?'':`<p>${item.start} – ${item.end}</p>`}</div>`).join('');
   $('readingTheme').textContent=reading.theme; $('readingDescription').innerHTML=addSalawat(reading.description); $('currentMetrics').innerHTML=metricHtml(reading); $('quranLink').href=quranUrl(reading);
   $('completeBtn').innerHTML=`<span id="completeBox">${isCompleted(reading.id)?'☑':'☐'}</span> ${isCompleted(reading.id)?'Completed':'Mark Complete'}`;
   const setBtn = $('setCurrentReadingBtn');
@@ -642,12 +712,14 @@ function renderCompletionAck(){
   $('aboutReadingPanel').classList.add('hidden');
   $('completionCard').classList.remove('hidden');
   $('readingTitle').textContent = isPageReading(next) ? `${schedule.name} • Reading ${next.id} of ${readings.length}` : (schedule.id === 'complete' ? `Reading ${next.id} of ${readings.length}` : `${schedule.name} • ${formatSurahNumber(next.quranSurah)} ${next.passages[0].name}`);
-  $('completedSummary').innerHTML = `${schedule.itemLabel} <strong>${schedule.id === 'complete' ? done.id : done.quranSurah}</strong>, <strong>${passageTitleNumbered(done)}</strong>, has been marked complete.`;
+  const completedLabel = isPageReading(done) ? done.id : (schedule.id === 'complete' ? done.id : done.quranSurah);
+  $('completedSummary').innerHTML = `${schedule.itemLabel} <strong>${completedLabel}</strong>, <strong>${passageTitleNumbered(done)}</strong>, has been marked complete.`;
   $('nextPreview').innerHTML = `<h3>${isPageReading(next) ? pageRangeText(next) : (schedule.id === 'complete' ? `Reading ${next.id}` : `${formatSurahNumber(next.quranSurah)} ${next.passages[0].name}`)}</h3><p class="subtle">${isPageReading(next) ? `Reading ${next.id} of ${readings.length}` : passageTitleNumbered(next)}</p><p class="theme">${next.theme}</p><div class="metrics centered-metrics">${metricHtml(next)}</div>`;
   $('beginNextBtn').textContent = done.id === readings.length ? `Start ${schedule.name} Again` : (next.id === done.id ? 'Return to Reading' : `Begin ${schedule.itemLabel} ${schedule.id === 'complete' ? next.id : next.quranSurah}`);
 }
 function planDetailItems(schedule){
   if(schedule.id === 'twoPages') return [{icon:'clipboard-list', value:'604', label:'Pages'}, {icon:'book-open', value:'302', label:'Readings'}, {icon:'chart', value:'302', label:'Days'}];
+  if(schedule.id === 'thirtyDay') return [{icon:'book-open', value:'30', label:'Readings'}, {icon:'library', value:'30', label:'Juz'}, {icon:'chart', value:'30', label:'Days'}];
   if(schedule.id === 'complete') return [{icon:'clipboard-list', value:'604', label:'Pages'}, {icon:'book-open', value:'120', label:'Readings'}, {icon:'chart', value:'120', label:'Days'}];
   return [{icon:'book-open', value:'37', label:'Surahs'}, {icon:'library', value:'1', label:'Juz'}, {icon:'check-circle', value:'37', label:'Readings'}];
 }
@@ -1034,7 +1106,7 @@ async function loadReadingText(reading){
   const groups=[];
   for(const [idx,passage] of reading.passages.entries()){
     if(passage.name.startsWith('Review:')) continue;
-    const surahNumber=passageSurahNumber(reading,idx);
+    const surahNumber=passage.surah || passageSurahNumber(reading,idx);
     const ayahs=await fetchSurahText(surahNumber);
     let passageAyahs=ayahs.filter(a=>a.numberInSurah>=passage.start && a.numberInSurah<=passage.end);
     const showBismillah = shouldShowReaderBismillah(surahNumber, passage);
@@ -1390,22 +1462,23 @@ function closePlanModal(){
   document.querySelectorAll('[data-view]').forEach(btn=>btn.classList.toggle('active',btn.dataset.view===visible));
   document.querySelectorAll('[data-action="openPlans"]').forEach(btn=>btn.classList.remove('active'));
 }
+function planMetadata(schedule){
+  if(schedule.id === 'juzAmma') return '37 readings';
+  if(schedule.id === 'thirtyDay') return '30 readings • 1 juz per reading';
+  if(schedule.id === 'complete') return '120 readings • about 4 months';
+  if(schedule.id === 'twoPages') return '302 readings • 302 days';
+  return schedule.countLabel;
+}
 function renderPlanModal(){
   const wrap = $('planOptions');
   if(!wrap) return;
   wrap.innerHTML = allSchedules().map(schedule => {
-    const summary = planProgressSummary(schedule.id);
     const isActive = schedule.id === activePlanId;
-    const pct = summary.total ? Math.round((summary.completed / summary.total) * 100) : 0;
-    return `<article class="plan-option ${isActive?'active':''} plan-${schedule.accent}">
-      <span class="plan-option-icon" aria-hidden="true">${schedule.icon}</span>
+    return `<article class="plan-option ${isActive?'active':''}">
       <span class="plan-option-main">
-        <strong>${schedule.name}</strong>
-        <small>${schedule.countLabel}</small>
+        <strong>${schedule.name.toUpperCase()}</strong>
         <span class="plan-option-desc">${schedule.description}</span>
-        <span class="plan-mini-progress"><span style="width:${pct}%"></span></span>
-        <em>${summary.status}</em>
-        <span class="plan-last-read">Last read: ${summary.last}</span>
+        <small>${planMetadata(schedule)}</small>
         <span class="plan-card-actions">
           <button class="plan-switch-btn" data-plan-id="${schedule.id}" type="button" ${isActive?'disabled':''}>${isActive?'Current Plan':'Switch to This Plan'}</button>
           <button class="plan-restart-btn" data-reset-plan-id="${schedule.id}" type="button">Start This Plan Over</button>

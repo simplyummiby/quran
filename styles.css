@@ -3554,3 +3554,114 @@ body {
   .plan-card-actions { display: grid; }
   .plan-switch-btn, .plan-restart-btn { width: 100%; }
 }
+
+/* v0.16.0: calmer Reading Plans modal */
+.plan-options {
+  gap: 14px;
+}
+.plan-option {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 38px !important;
+  gap: 16px !important;
+  align-items: start !important;
+  padding: 18px 20px !important;
+  border: 1px solid #dfe9d8 !important;
+  border-radius: 16px !important;
+  background: rgba(255,253,248,.96) !important;
+  box-shadow: 0 8px 22px rgba(37,30,18,.045) !important;
+}
+.plan-option:hover {
+  background: #fbfdf8 !important;
+}
+.plan-option.active {
+  background: linear-gradient(90deg, #f4f8ef, #fffdf8) !important;
+  border-color: #cfe2cb !important;
+}
+.plan-option-icon {
+  display: none !important;
+}
+.plan-option-main {
+  display: block;
+  min-width: 0;
+}
+.plan-option-main strong {
+  display: block;
+  margin: 0 0 8px;
+  color: var(--green) !important;
+  font-family: var(--font-ui) !important;
+  font-size: .92rem !important;
+  line-height: 1.25;
+  letter-spacing: .13em !important;
+  text-transform: uppercase;
+  font-weight: 900 !important;
+}
+.plan-option-desc {
+  display: block;
+  margin: 0 0 8px !important;
+  color: var(--ink) !important;
+  line-height: 1.55;
+  font-weight: 600;
+}
+.plan-option-main small {
+  display: block;
+  margin: 0 0 12px !important;
+  color: var(--muted) !important;
+  font-family: var(--font-ui) !important;
+  font-size: .9rem;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+}
+.plan-option-main em,
+.plan-mini-progress,
+.plan-last-read {
+  display: none !important;
+}
+.plan-check {
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 999px !important;
+  background: #fffdf8 !important;
+  border: 1px solid #d7e5d3 !important;
+  color: var(--green) !important;
+  font-weight: 900 !important;
+}
+.plan-option.active .plan-check {
+  background: #e7f1df !important;
+  border-color: #cfe2cb !important;
+  color: var(--green) !important;
+}
+.plan-card-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.plan-switch-btn,
+.plan-restart-btn {
+  min-height: 42px;
+  padding: 0 14px;
+  border-radius: 9px;
+  font-weight: 800;
+  border: 1px solid #cfe2cb;
+}
+.plan-switch-btn {
+  background: #f4f8ef;
+  color: var(--green);
+}
+.plan-switch-btn:disabled {
+  background: #e7f1df;
+  color: var(--green);
+  opacity: 1;
+  cursor: default;
+}
+.plan-restart-btn {
+  background: #fffaf2;
+  border-color: #d8cbb9;
+  color: #7b4a35;
+}
+@media (max-width: 760px){
+  .plan-option { grid-template-columns: 1fr !important; }
+  .plan-check { justify-self: start; order: -1; }
+  .plan-card-actions { display: grid; }
+  .plan-switch-btn, .plan-restart-btn { width: 100%; }
+}

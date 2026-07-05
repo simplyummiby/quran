@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.16.1
+- Hotfix: Updated the 30 Day Plan with proper juz surah/ayah boundaries.
+- Reading Mode now loads 30 Day Plan readings using surah ranges instead of relying on page-only loading.
+- Kept existing plans unchanged.
+
+## v0.16.0
+- Added the 30 Day Plan with 30 juz-based readings.
+- Refreshed the Reading Plans modal with calmer, unified plan cards.
+- Removed the colorful per-plan accents and decorative icons from Reading Plans.
+- Simplified Reading Plans cards to show plan name, description, metadata, and actions.
+
 ## v0.15.3
 - Moved Start This Plan Over into each individual Reading Plans card.
 - Added Switch to This Plan / Current Plan buttons inside each plan card.
