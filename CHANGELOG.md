@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.13.3
+- Replaced home page placeholder SVG artwork with photographic PNG assets.
+- Current Plan now uses `assets/images/current-plan.png`.
+- Current Reading now uses `assets/images/current-reading.png`.
+
 ## v0.13.2
 - Removed the decorative ornament/image under Welcome/Welcome Back.
 - Updated the phone header to match the refined green-and-gold visual direction used by the sidebar on larger screens.
