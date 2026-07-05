@@ -390,17 +390,43 @@ async function fetchSurahText(surahNumber){
   surahCache.set(surahNumber,combined);
   return combined;
 }
+
+const READER_BISMILLAH_ARABIC = 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ';
+const LEADING_BISMILLAH_PATTERNS = [
+  /^\s*بِسْمِ\s+[ٱا]للَّهِ\s+[ٱا]لرَّحْمَ[ٰـ]?نِ\s+[ٱا]لرَّحِيمِ\s*/u,
+  /^\s*بسم\s+الله\s+الرحمن\s+الرحيم\s*/u
+];
+function stripLeadingBismillah(text=''){
+  for(const pattern of LEADING_BISMILLAH_PATTERNS){
+    if(pattern.test(text)){
+      return { text: text.replace(pattern, '').trim(), stripped: true };
+    }
+  }
+  return { text, stripped: false };
+}
+function shouldShowReaderBismillah(surahNumber, passage){
+  // Tawbah does not begin with the basmalah. Al-Fatihah's basmalah is treated as āyah 1.
+  return passage.start === 1 && surahNumber !== 1 && surahNumber !== 9;
+}
+
 async function loadReadingText(reading){
   const groups=[];
   for(const [idx,passage] of reading.passages.entries()){
     if(passage.name.startsWith('Review:')) continue;
     const surahNumber=passageSurahNumber(reading,idx);
     const ayahs=await fetchSurahText(surahNumber);
+    let passageAyahs=ayahs.filter(a=>a.numberInSurah>=passage.start && a.numberInSurah<=passage.end);
+    const showBismillah = shouldShowReaderBismillah(surahNumber, passage);
+    if(showBismillah && passageAyahs[0]){
+      const cleaned = stripLeadingBismillah(passageAyahs[0].arabic);
+      passageAyahs = [{...passageAyahs[0], arabic: cleaned.text}, ...passageAyahs.slice(1)];
+    }
     groups.push({
       title:`${formatSurahNumber(surahNumber)} ${passage.name} ${passage.start}–${passage.end}`,
       surahName: passage.name,
       surahNumber,
-      ayahs:ayahs.filter(a=>a.numberInSurah>=passage.start && a.numberInSurah<=passage.end)
+      bismillah: showBismillah ? READER_BISMILLAH_ARABIC : '',
+      ayahs: passageAyahs
     });
   }
   return groups;
@@ -469,6 +495,7 @@ function renderReaderGroups(groups){
   $('readerBody').innerHTML=groups.map(group=>`
     <section class="reader-surah">
       <h3>${group.title}</h3>
+      ${group.bismillah ? `<p class="reader-bismillah" dir="rtl" lang="ar">${group.bismillah}</p>` : ''}
       ${group.ayahs.map(ayah=>`
         <article class="ayah-card" data-surah-name="${group.surahName || group.title}" data-surah-number="${group.surahNumber}" data-ayah="${ayah.numberInSurah}">
           <div class="ayah-top"><span class="ayah-number">${ayah.numberInSurah}</span></div>

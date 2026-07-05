@@ -990,3 +990,28 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
     grid-template-columns: 58px minmax(0, 1fr);
   }
 }
+
+
+/* v0.8.8 Basmalah display fix */
+.reader-bismillah {
+  margin: -10px auto 26px;
+  text-align: center;
+  color: var(--green);
+  font-family: "Amiri Quran", "Scheherazade New", "Traditional Arabic", "Times New Roman", serif;
+  font-size: clamp(1.9rem, 4vw, 2.9rem);
+  line-height: 1.9;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+.reader-mode.reader-theme-dark .reader-bismillah {
+  color: #fbfffb;
+}
+@media (max-width: 760px){
+  .reader-bismillah {
+    margin-top: -4px;
+    margin-bottom: 20px;
+    font-size: clamp(1.65rem, 8vw, 2.35rem);
+  }
+}
