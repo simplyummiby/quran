@@ -1398,6 +1398,29 @@ $('resetReaderAppearance')?.addEventListener('click',()=>{
   updateReaderModeButtons(); haptic(10);
 });
 
+function closeMobileMenu(){
+  const panel = $('mobileMenuPanel');
+  const backdrop = $('mobileMenuBackdrop');
+  const toggle = $('mobileMenuToggle');
+  if(panel) panel.classList.add('hidden');
+  if(backdrop) backdrop.classList.add('hidden');
+  if(toggle) toggle.setAttribute('aria-expanded','false');
+  document.body.classList.remove('mobile-menu-open');
+}
+function openMobileMenu(){
+  const panel = $('mobileMenuPanel');
+  const backdrop = $('mobileMenuBackdrop');
+  const toggle = $('mobileMenuToggle');
+  if(panel) panel.classList.remove('hidden');
+  if(backdrop) backdrop.classList.remove('hidden');
+  if(toggle) toggle.setAttribute('aria-expanded','true');
+  document.body.classList.add('mobile-menu-open');
+}
+$('mobileMenuToggle')?.addEventListener('click', openMobileMenu);
+$('mobileMenuClose')?.addEventListener('click', closeMobileMenu);
+$('mobileMenuBackdrop')?.addEventListener('click', closeMobileMenu);
+document.querySelectorAll('#mobileMenuPanel .nav-item').forEach(btn=>btn.addEventListener('click', closeMobileMenu));
+
 function openAbout(){ $('aboutModal').classList.remove('hidden'); } function closeAbout(){ $('aboutModal').classList.add('hidden'); }
-document.querySelectorAll('[data-modal="aboutSchedule"]').forEach(btn=>btn.addEventListener('click',openAbout)); $('closeAboutModal')?.addEventListener('click',closeAbout); $('gotItAbout')?.addEventListener('click',closeAbout); $('aboutModal')?.addEventListener('click',e=>{if(e.target.id==='aboutModal') closeAbout();}); document.addEventListener('keydown',e=>{if(e.key==='Escape') { closeAbout(); closePlanModal(); closeBrowseModal(); $('readerAppearancePanel')?.classList.add('hidden'); closeReader(); }});
+document.querySelectorAll('[data-modal="aboutSchedule"]').forEach(btn=>btn.addEventListener('click',openAbout)); $('closeAboutModal')?.addEventListener('click',closeAbout); $('gotItAbout')?.addEventListener('click',closeAbout); $('aboutModal')?.addEventListener('click',e=>{if(e.target.id==='aboutModal') closeAbout();}); document.addEventListener('keydown',e=>{if(e.key==='Escape') { closeAbout(); closePlanModal(); closeBrowseModal(); closeMobileMenu(); $('readerAppearancePanel')?.classList.add('hidden'); closeReader(); }});
 renderAll();
