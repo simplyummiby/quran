@@ -1293,6 +1293,35 @@ function renderResetControls(){
     btn.disabled = false;
   });
 }
+function resetPlanProgress(planId){
+  const targetPlanId = SCHEDULES[planId] ? planId : activePlanId;
+  const schedule = SCHEDULES[targetPlanId] || activeSchedule();
+  if(!confirm(`Start ${schedule.name} over?\n\nThis will reset progress for this plan, move its current reading back to the beginning, and keep History unchanged.`)) return;
+
+  if(targetPlanId === activePlanId){
+    state.current = 1;
+    state.completed.clear();
+    state.completionAck = null;
+    state.cycleStarted = new Date().toISOString();
+    state.history.push({type:'restart-current-cycle',cycle:state.cycle,plan:activePlanId,date:new Date().toISOString()});
+  } else {
+    const stored = planProgress[targetPlanId] || defaultPlanProgress(targetPlanId);
+    planProgress[targetPlanId] = {
+      ...stored,
+      current: 1,
+      completed: [],
+      cycleStarted: new Date().toISOString(),
+      history: Array.isArray(stored.history) ? stored.history : []
+    };
+    planProgress[targetPlanId].history.push({type:'restart-current-cycle',cycle:Number(stored.cycle || 1),plan:targetPlanId,date:new Date().toISOString()});
+  }
+
+  save();
+  renderAll();
+  renderPlanModal();
+  if(targetPlanId === activePlanId) showView('home');
+}
+
 function resetCurrentPlanProgress(){
   const schedule = activeSchedule();
   const confirmed = confirm(`Start this plan over?\n\nThis will:\n• Reset your progress for ${schedule.name}.\n• Move your current reading back to the beginning.\n• Keep your History unchanged.`);
@@ -1368,7 +1397,7 @@ function renderPlanModal(){
     const summary = planProgressSummary(schedule.id);
     const isActive = schedule.id === activePlanId;
     const pct = summary.total ? Math.round((summary.completed / summary.total) * 100) : 0;
-    return `<button class="plan-option ${isActive?'active':''} plan-${schedule.accent}" data-plan-id="${schedule.id}" type="button">
+    return `<article class="plan-option ${isActive?'active':''} plan-${schedule.accent}">
       <span class="plan-option-icon" aria-hidden="true">${schedule.icon}</span>
       <span class="plan-option-main">
         <strong>${schedule.name}</strong>
@@ -1377,11 +1406,16 @@ function renderPlanModal(){
         <span class="plan-mini-progress"><span style="width:${pct}%"></span></span>
         <em>${summary.status}</em>
         <span class="plan-last-read">Last read: ${summary.last}</span>
+        <span class="plan-card-actions">
+          <button class="plan-switch-btn" data-plan-id="${schedule.id}" type="button" ${isActive?'disabled':''}>${isActive?'Current Plan':'Switch to This Plan'}</button>
+          <button class="plan-restart-btn" data-reset-plan-id="${schedule.id}" type="button">Start This Plan Over</button>
+        </span>
       </span>
       <span class="plan-check" aria-hidden="true">${isActive?'✓':'○'}</span>
-    </button>`;
+    </article>`;
   }).join('');
   wrap.querySelectorAll('[data-plan-id]').forEach(btn => btn.addEventListener('click', () => switchPlan(btn.dataset.planId)));
+  wrap.querySelectorAll('[data-reset-plan-id]').forEach(btn => btn.addEventListener('click', () => resetPlanProgress(btn.dataset.resetPlanId)));
 }
 
 function renderStartCycleCard(){
@@ -1486,7 +1520,6 @@ $('browseScheduleModal')?.addEventListener('click',e=>{ if(e.target.id === 'brow
 $('browseScheduleSearch')?.addEventListener('input',renderBrowseScheduleModal);
 $('resetPlanProgressBtn')?.addEventListener('click',resetCurrentPlanProgress);
 $('homeResetPlanBtn')?.addEventListener('click',resetCurrentPlanProgress);
-$('modalStartPlanOverBtn')?.addEventListener('click',()=>{ resetCurrentPlanProgress(); closePlanModal(); });
 $('downloadBackupBtn')?.addEventListener('click',downloadBackup);
 $('restoreBackupInput')?.addEventListener('change',e=>restoreBackupFile(e.target.files && e.target.files[0]));
 $('dismissBackupTip')?.addEventListener('click',()=>{ localStorage.setItem('qrc_backup_tip_dismissed_v0152','true'); renderBackupTip(); });

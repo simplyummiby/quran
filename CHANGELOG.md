@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.15.3
+- Moved Start This Plan Over into each individual Reading Plans card.
+- Added Switch to This Plan / Current Plan buttons inside each plan card.
+- Kept the active-plan checkmark indicator.
+- Added a local-storage warning at the top of Backup & Restore.
+
 ## v0.15.2
 - Added Backup & Restore page with JSON export and restore.
 - Added local storage notice to About This App.

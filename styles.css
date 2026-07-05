@@ -3504,3 +3504,53 @@ body {
   .plan-modal-actions { justify-content: stretch; }
   .plan-modal-actions .ghost-outline { width: 100%; }
 }
+
+/* v0.15.3 plan-specific reset + backup storage notice */
+.plan-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+.plan-switch-btn,
+.plan-restart-btn {
+  min-height: 42px;
+  padding: 0 14px;
+  border-radius: 9px;
+  font-weight: 800;
+  border: 1px solid var(--line);
+  background: #fffdf8;
+  color: var(--green);
+}
+.plan-switch-btn {
+  background: #f4f8ef;
+  border-color: #cfe2cb;
+}
+.plan-switch-btn:disabled {
+  opacity: 1;
+  cursor: default;
+  background: #e7f1df;
+  color: var(--green);
+}
+.plan-restart-btn {
+  color: #7b4a35;
+  border-color: #d8cbb9;
+  background: #fffaf2;
+}
+.plan-restart-btn:hover { background: #fff3e5; }
+.plan-option { cursor: default; }
+.backup-local-note {
+  max-width: 960px;
+  margin: 0 auto 18px;
+  padding: 18px 20px;
+  border: 1px solid #dbe7d6;
+  border-radius: 16px;
+  background: linear-gradient(90deg, #f4f8ef, #fffdf8);
+  box-shadow: 0 8px 20px rgba(37,30,18,.04);
+}
+.backup-local-note strong { color: var(--green); }
+.backup-local-note p { margin: 6px 0 0; line-height: 1.6; color: var(--ink); }
+@media (max-width: 760px){
+  .plan-card-actions { display: grid; }
+  .plan-switch-btn, .plan-restart-btn { width: 100%; }
+}
