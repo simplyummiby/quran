@@ -195,6 +195,7 @@ const SCHEDULES = {
 };
 let activePlanId = localStorage.getItem('qrc_active_plan_v09') || 'complete';
 let readings = SCHEDULES[activePlanId]?.items || completeQuranReadings;
+let historyViewPlanId = activePlanId;
 
 function p(name, start, end) { return { name, start, end }; }
 function r(id, passages, theme, description, quranSurah, quranAyah, pages) {
@@ -312,10 +313,32 @@ function planProgressSummary(planId){
   const last = completed || current > 1 ? `${schedule.itemLabel} ${current}: ${passageTitleNumbered(currentItem)}` : 'Not started';
   return { schedule, completed, total: schedule.items.length, current, currentItem, status, last };
 }
+function progressForPlan(planId){
+  const schedule = SCHEDULES[planId] || SCHEDULES.complete;
+  const stored = planId === activePlanId
+    ? { current: state.current, completed: [...state.completed], cycle: state.cycle, history: state.history, cycleStarted: state.cycleStarted }
+    : (planProgress[planId] || defaultPlanProgress(planId));
+  const current = Math.min(schedule.items.length, Math.max(1, Number(stored.current || 1)));
+  return {
+    schedule,
+    current,
+    completed: new Set(Array.isArray(stored.completed) ? stored.completed.map(Number) : []),
+    cycle: Number(stored.cycle || 1),
+    history: Array.isArray(stored.history) ? stored.history : [],
+    cycleStarted: stored.cycleStarted || new Date().toISOString(),
+    currentItem: schedule.items[current - 1] || schedule.items[0]
+  };
+}
+function completedCyclesForPlan(planId){
+  return progressForPlan(planId).history
+    .filter(item => item && item.type === 'completed-cycle')
+    .sort((a,b) => new Date(b.completedAt) - new Date(a.completedAt));
+}
 function switchPlan(planId){
   if(!SCHEDULES[planId] || planId === activePlanId) { closePlanModal(); return; }
   storeActiveProgress();
   loadPlanIntoState(planId);
+  historyViewPlanId = activePlanId;
   state.selectedJump = 1;
   state.query = '';
   state.filter = 'all';
@@ -365,6 +388,31 @@ function durationDays(startIso,endIso){
 function completedCycles(){
   return state.history.filter(item=>item.type==='completed-cycle').sort((a,b)=>new Date(b.completedAt)-new Date(a.completedAt));
 }
+function renderHistoryPlanTabs(){
+  const wrap = $('historyPlanTabs');
+  if(!wrap) return;
+  if(!SCHEDULES[historyViewPlanId]) historyViewPlanId = activePlanId;
+  wrap.innerHTML = allSchedules().map(schedule => {
+    const summary = planProgressSummary(schedule.id);
+    const isActive = schedule.id === historyViewPlanId;
+    return `<button class="history-plan-tab ${isActive?'active':''} plan-${schedule.accent}" data-history-plan="${schedule.id}" type="button">
+      <span>${schedule.icon}</span>
+      <strong>${schedule.name}</strong>
+      <small>${summary.completed} / ${summary.total} ${schedule.unitPlural}</small>
+    </button>`;
+  }).join('');
+  wrap.querySelectorAll('[data-history-plan]').forEach(btn => btn.addEventListener('click', () => {
+    historyViewPlanId = btn.dataset.historyPlan;
+    renderHistory();
+  }));
+  const note = $('historyPlanNote');
+  const viewed = SCHEDULES[historyViewPlanId] || activeSchedule();
+  if(note) {
+    note.textContent = historyViewPlanId === activePlanId
+      ? `${viewed.name} history is shown. Other plans keep their own separate history and progress.`
+      : `Viewing ${viewed.name} history. Your current active plan is still ${activeSchedule().name}.`;
+  }
+}
 
 function itemHeading(reading){
   const schedule = activeSchedule();
@@ -373,6 +421,15 @@ function itemHeading(reading){
 function itemSmallLabel(reading){
   const schedule = activeSchedule();
   return schedule.id === 'complete' ? `Reading ${reading.id}` : `Surah ${reading.quranSurah}`;
+}
+function currentPlanPositionText(reading = currentReading()){
+  const schedule = activeSchedule();
+  if(schedule.id === 'complete') return `Reading ${state.current} of ${readings.length}`;
+  return `Surah ${reading.quranSurah} • ${state.completed.size} of ${readings.length} ${schedule.unitPlural} completed`;
+}
+function currentPlanProgressLabel(){
+  const schedule = activeSchedule();
+  return `${state.completed.size} of ${readings.length} ${schedule.unitPlural} completed`;
 }
 function renderCurrent(){
   if (state.completionAck) {
@@ -425,8 +482,10 @@ function renderHome(){
 function updateProgress(){
   const schedule = activeSchedule();
   const done=state.completed.size,total=readings.length,pct=Math.round((done/total)*100),degrees=pct*3.6;
-  ['sidePercent','bigPercent'].forEach(id=>$(id).textContent=`${pct}%`); $('progressText').textContent=`${done} of ${total} ${schedule.unitPlural} completed`; $('bigProgressText').textContent=`${done} of ${total} ${schedule.unitPlural} completed`; ['sideRing','bigRing'].forEach(id=>$(id).style.background=`conic-gradient(var(--green) ${degrees}deg, #e4e3df ${degrees}deg)`);
-  $('completedStat').textContent=done; $('remainingStat').textContent=total-done; $('currentStat').textContent=schedule.id === 'complete' ? state.current : currentReading().quranSurah; $('cycleStat').textContent=state.cycle; $('sideCompleted').textContent=done; $('sideRemaining').textContent=total-done; $('cycleTitle').textContent=schedule.name; $('cycleDetails').textContent=`${schedule.itemLabel} ${schedule.id === 'complete' ? state.current : currentReading().quranSurah} of ${total}`;
+  ['sidePercent','bigPercent'].forEach(id=>$(id).textContent=`${pct}%`); $('progressText').textContent=currentPlanProgressLabel(); $('bigProgressText').textContent=currentPlanProgressLabel(); ['sideRing','bigRing'].forEach(id=>$(id).style.background=`conic-gradient(var(--green) ${degrees}deg, #e4e3df ${degrees}deg)`);
+  $('completedStat').textContent=done; $('remainingStat').textContent=total-done; $('currentStat').textContent=schedule.id === 'complete' ? state.current : currentReading().quranSurah; $('cycleStat').textContent=state.cycle; $('sideCompleted').textContent=done; $('sideRemaining').textContent=total-done;
+  const cycleEyebrow = $('cyclePanelEyebrow'); if(cycleEyebrow) cycleEyebrow.textContent = 'Current Plan';
+  $('cycleTitle').textContent=schedule.name; $('cycleDetails').textContent=currentPlanPositionText();
   const next=readings[Math.min(total-1,state.current)]; $('nextBadge').textContent=schedule.id === 'complete' ? next.id : next.quranSurah; $('upNextTitle').textContent=passageTitleNumbered(next); $('upNextTheme').textContent=next.theme;
 }
 function readingNumberBadge(reading){
@@ -518,25 +577,30 @@ function startNewCycle({recordCompleted=false}={}){
 }
 function showView(name){ if(name !== 'current') state.completionAck=null; views.forEach(v=>$(`${v}View`).classList.toggle('hidden',v!==name)); document.querySelectorAll('[data-view]').forEach(btn=>btn.classList.toggle('active',btn.dataset.view===name)); renderCurrent(); }
 function renderHistory(){
-  const schedule = activeSchedule();
-  const current=currentReading();
-  const completedCount=state.completed.size;
-  $('historyCurrentCycle').innerHTML = `
-    <div class="history-current-main">
-      <strong>${schedule.name}</strong>
-      <span>Started ${formatDate(state.cycleStarted)}</span>
-    </div>
-    <dl class="history-details">
-      <div><dt>Current ${schedule.itemLabel}</dt><dd>${schedule.itemLabel} ${schedule.id === 'complete' ? state.current : current.quranSurah} of ${readings.length}</dd></div>
-      <div><dt>Current Passage</dt><dd>${passageTitleNumbered(current)}</dd></div>
-      <div><dt>Read in This Plan</dt><dd>${completedCount} ${completedCount===1?schedule.unitSingular:schedule.unitPlural}</dd></div>
-    </dl>
-    <div class="history-actions centered-actions">
-      <button class="primary-btn" data-history-action="resume">Continue Reading</button>
-      <button class="ghost-outline" data-history-action="choose">Choose Starting ${schedule.itemLabel}</button>
-    </div>`;
+  if(!SCHEDULES[historyViewPlanId]) historyViewPlanId = activePlanId;
+  const { schedule, current, completed, history, cycleStarted, currentItem } = progressForPlan(historyViewPlanId);
+  renderHistoryPlanTabs();
+  const completedCount = completed.size;
+  const currentIsActivePlan = historyViewPlanId === activePlanId;
+  const historyCurrent = $('historyCurrentCycle');
+  if(historyCurrent){
+    historyCurrent.innerHTML = `
+      <div class="history-current-main">
+        <strong>${schedule.name}</strong>
+        <span>${currentIsActivePlan ? 'Current active plan' : `Viewing saved ${schedule.name} progress`}</span>
+      </div>
+      <dl class="history-details">
+        <div><dt>Started</dt><dd>${formatDate(cycleStarted)}</dd></div>
+        <div><dt>Current ${schedule.itemLabel}</dt><dd>${positionTextForPlan(schedule, currentItem, current)}</dd></div>
+        <div><dt>Read in This Plan</dt><dd>${completedCount} ${completedCount===1?schedule.unitSingular:schedule.unitPlural}</dd></div>
+      </dl>
+      <div class="history-actions centered-actions">
+        <button class="primary-btn" data-history-action="resume" data-plan-id="${schedule.id}">${currentIsActivePlan ? 'Continue Reading' : `Switch to ${schedule.name}`}</button>
+        <button class="ghost-outline" data-history-action="choose" data-plan-id="${schedule.id}">Choose Starting ${schedule.itemLabel}</button>
+      </div>`;
+  }
 
-  const cycles=completedCycles();
+  const cycles = history.filter(item=>item && item.type==='completed-cycle').sort((a,b)=>new Date(b.completedAt)-new Date(a.completedAt));
   $('historyTotal').textContent=cycles.length;
   if(!cycles.length){
     $('completedCyclesHistory').innerHTML = `
@@ -545,21 +609,29 @@ function renderHistory(){
         <h3>No completed cycles yet.</h3>
         <p>Your completed cycles for this plan will appear here after you finish your first cycle.</p>
         <div class="history-actions centered-actions">
-          <button class="primary-btn" data-history-action="resume">Continue Reading</button>
-          <button class="ghost-outline" data-history-action="choose">Choose Starting ${schedule.itemLabel}</button>
+          <button class="primary-btn" data-history-action="resume" data-plan-id="${schedule.id}">${currentIsActivePlan ? 'Continue Reading' : `Switch to ${schedule.name}`}</button>
+          <button class="ghost-outline" data-history-action="choose" data-plan-id="${schedule.id}">Choose Starting ${schedule.itemLabel}</button>
         </div>
       </div>`;
   } else {
     $('completedCyclesHistory').innerHTML = `
       <div class="history-table-wrap">
         <table class="history-table">
-          <thead><tr><th>Cycle</th><th>Started</th><th>Completed</th><th>Duration</th></tr></thead>
-          <tbody>${cycles.map(c=>`<tr><td>Cycle ${c.cycle}</td><td>${formatDate(c.startedAt)}</td><td>${formatDate(c.completedAt)}</td><td>${c.duration || durationDays(c.startedAt,c.completedAt)}</td></tr>`).join('')}</tbody>
+          <thead><tr><th>Plan</th><th>Cycle</th><th>Started</th><th>Completed</th><th>Duration</th></tr></thead>
+          <tbody>${cycles.map(c=>`<tr><td>${schedule.name}</td><td>Cycle ${c.cycle}</td><td>${formatDate(c.startedAt)}</td><td>${formatDate(c.completedAt)}</td><td>${c.duration || durationDays(c.startedAt,c.completedAt)}</td></tr>`).join('')}</tbody>
         </table>
       </div>`;
   }
-  document.querySelectorAll('[data-history-action="resume"]').forEach(btn=>btn.addEventListener('click',()=>openReader()));
-  document.querySelectorAll('[data-history-action="choose"]').forEach(btn=>btn.addEventListener('click',()=>showView('home')));
+  document.querySelectorAll('[data-history-action="resume"]').forEach(btn=>btn.addEventListener('click',()=>{
+    const planId = btn.dataset.planId;
+    if(planId !== activePlanId) switchPlan(planId);
+    openReader();
+  }));
+  document.querySelectorAll('[data-history-action="choose"]').forEach(btn=>btn.addEventListener('click',()=>{
+    const planId = btn.dataset.planId;
+    if(planId !== activePlanId) switchPlan(planId);
+    openBrowseModal();
+  }));
 }
 
 async function fetchSurahText(surahNumber){
@@ -849,8 +921,18 @@ function renderBrowseScheduleModal(){
   list.querySelectorAll('[data-id]').forEach(btn => btn.addEventListener('click', () => { setStartingReading(Number(btn.dataset.id)); closeBrowseModal(); }));
 }
 
-function openPlanModal(){ renderPlanModal(); $('planModal')?.classList.remove('hidden'); }
-function closePlanModal(){ $('planModal')?.classList.add('hidden'); }
+function openPlanModal(){
+  renderPlanModal();
+  $('planModal')?.classList.remove('hidden');
+  document.querySelectorAll('.nav-item').forEach(btn=>btn.classList.remove('active'));
+  document.querySelectorAll('[data-action="openPlans"]').forEach(btn=>btn.classList.add('active'));
+}
+function closePlanModal(){
+  $('planModal')?.classList.add('hidden');
+  const visible = views.find(v => !$(`${v}View`).classList.contains('hidden')) || 'home';
+  document.querySelectorAll('[data-view]').forEach(btn=>btn.classList.toggle('active',btn.dataset.view===visible));
+  document.querySelectorAll('[data-action="openPlans"]').forEach(btn=>btn.classList.remove('active'));
+}
 function renderPlanModal(){
   const wrap = $('planOptions');
   if(!wrap) return;
@@ -910,6 +992,13 @@ $('closeBrowseScheduleModal')?.addEventListener('click',closeBrowseModal);
 $('browseScheduleModal')?.addEventListener('click',e=>{ if(e.target.id === 'browseScheduleModal') closeBrowseModal(); });
 $('browseScheduleSearch')?.addEventListener('input',renderBrowseScheduleModal);
 $('jumpSearch').addEventListener('input',e=>{state.query=e.target.value;renderJump();}); $('browseAllBtn').addEventListener('click',()=>{state.query='';$('jumpSearch').value='';renderJump();}); document.querySelectorAll('[data-query]').forEach(btn=>btn.addEventListener('click',()=>{state.query=btn.dataset.query;$('jumpSearch').value=state.query;renderJump();}));
+document.querySelectorAll('[data-action="openPlans"]').forEach(btn=>btn.addEventListener('click', (event)=>{ event.preventDefault(); openPlanModal(); }));
+document.addEventListener('click', (event)=>{
+  const planButton = event.target.closest('[data-action="openPlans"]');
+  if(!planButton) return;
+  event.preventDefault();
+  openPlanModal();
+});
 document.querySelectorAll('[data-view]').forEach(btn=>btn.addEventListener('click',()=>{ if(btn.dataset.view==='readings'){ openBrowseModal(); return; } showView(btn.dataset.view); })); document.querySelectorAll('[data-filter]').forEach(btn=>btn.addEventListener('click',()=>{state.filter=btn.dataset.filter;document.querySelectorAll('[data-filter]').forEach(p=>p.classList.toggle('active',p.dataset.filter===state.filter));renderReadings();}));
 
 $('homeReaderBtn').addEventListener('click',openReader);

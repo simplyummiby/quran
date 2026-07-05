@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Qur'an Reading Schedule v0.9.0</title>
+  <title>Qur'an Reading Schedule v0.9.3</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Scheherazade+New:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -31,6 +31,7 @@
         <button class="nav-item active" data-view="home">⌂ <span>Home</span></button>
         <button class="nav-item" data-view="current">📖 <span>Current Reading</span></button>
         <button class="nav-item" data-view="readings">☷ <span>Browse Schedule</span></button>
+        <button class="nav-item" data-action="openPlans">▤ <span>Reading Plans</span></button>
         <button class="nav-item" data-view="history">◷ <span>History</span></button>
         <button class="nav-item" data-modal="aboutSchedule">ⓘ <span>About This Schedule</span></button>
         <button class="nav-item" data-view="progress">◌ <span>Progress</span></button>
@@ -146,12 +147,10 @@
 
       <section class="content hidden" id="historyView">
         <div class="section-heading"><p class="eyebrow">Reading History</p><h2>Your Journey</h2></div>
-        <div class="history-grid">
-          <section class="history-card current-cycle-history">
-            <p class="eyebrow">Current Cycle</p>
-            <div id="historyCurrentCycle"></div>
-          </section>
-          <section class="history-card">
+        <div id="historyPlanTabs" class="history-plan-tabs" aria-label="History by reading plan"></div>
+        <p id="historyPlanNote" class="history-plan-note">History follows the currently selected reading plan.</p>
+        <div class="history-grid history-only-grid">
+          <section class="history-card history-past-card">
             <div class="history-title-row">
               <div>
                 <p class="eyebrow">Completed Cycles</p>
@@ -186,7 +185,7 @@
           <div class="mini-stats"><span><strong id="sideCompleted">0</strong> Completed</span><span><strong id="sideRemaining">120</strong> Not checked</span></div>
         </div>
         <div class="panel-card">
-          <p class="eyebrow">Current Cycle</p>
+          <p class="eyebrow" id="cyclePanelEyebrow">Current Plan</p>
           <h3 id="cycleTitle">Cycle 1</h3>
           <p id="cycleDetails" class="subtle">Reading 1 of 120</p>
         </div>
