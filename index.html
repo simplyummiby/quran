@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Qur'an Reading Schedule v0.9.3</title>
+  <title>Quran Reading Companion v0.12.0</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Scheherazade+New:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -15,14 +15,15 @@
       <div class="brand">
         <div class="brand-icon" aria-hidden="true">📖</div>
         <div>
-          <h1>Qur'an Reading Schedule</h1>
-          <p>Steady steps, lasting reward.</p>
+          <h1>Quran Reading Companion</h1>
+          <p class="brand-byline">by Simply Ummiby</p>
+          <p class="brand-tagline">Steady steps, lasting reward.</p>
         </div>
       </div>
       <nav class="top-actions" aria-label="Top navigation">
         <button class="ghost-btn" data-view="readings">Browse Schedule</button>
         <button class="ghost-btn" data-view="progress">Progress</button>
-        <button class="ghost-btn" data-view="history">History</button>
+        <button class="ghost-btn" data-view="history">Completed Cycles</button>
       </nav>
     </header>
 
@@ -32,7 +33,7 @@
         <button class="nav-item" data-view="current">📖 <span>Current Reading</span></button>
         <button class="nav-item" data-view="readings">☷ <span>Browse Schedule</span></button>
         <button class="nav-item" data-action="openPlans">▤ <span>Reading Plans</span></button>
-        <button class="nav-item" data-view="history">◷ <span>History</span></button>
+        <button class="nav-item" data-view="history">◷ <span>Completed Cycles</span></button>
         <button class="nav-item" data-modal="aboutSchedule">ⓘ <span>About This Schedule</span></button>
         <button class="nav-item" data-view="progress">◌ <span>Progress</span></button>
 
@@ -44,60 +45,80 @@
       </aside>
 
       <section class="content" id="homeView">
-        <div class="welcome home-welcome">
-          <div>
-            <h2>As-salāmu ‘alaykum</h2>
-            <p class="subtle">May Allah make our Qur'an a spring of light in our hearts.</p>
+        <div class="home-dashboard-head">
+          <div class="welcome home-welcome">
+            <div>
+              <h2>Welcome back!</h2>
+              <p class="subtle">May Allah make our Qur'an a light in our hearts.</p>
+            </div>
+            <div class="flourish">✤</div>
           </div>
-          <div class="flourish">✤</div>
+
+          <section class="plan-home-card" aria-label="Current reading plan">
+            <div class="current-plan-display" id="currentPlanCard">
+              <span class="plan-icon" id="currentPlanIcon" aria-hidden="true">📖</span>
+              <span class="current-plan-copy">
+                <small>Current Plan</small>
+                <strong id="currentPlanName">120 Day Plan</strong>
+                <em id="currentPlanCount">120 Readings</em>
+              </span>
+              <button class="switch-plan-btn" id="currentPlanBtn" type="button" aria-haspopup="dialog" aria-controls="planModal">⇄ Switch Plan</button>
+            </div>
+          </section>
         </div>
 
-        <section class="plan-home-card" aria-label="Current reading plan">
-          <button class="current-plan-btn" id="currentPlanBtn" type="button" aria-haspopup="dialog" aria-controls="planModal">
-            <span class="plan-icon" aria-hidden="true">📖</span>
-            <span><small>Current Plan</small><strong>Complete Qur'an</strong><em>120 Readings</em></span>
-            <span class="plan-caret">⌄</span>
-          </button>
-          <p id="planReassurance" class="plan-reassurance">Each plan keeps its own progress, so you can switch anytime without losing your place.</p>
-        </section>
+        <div class="home-dashboard-grid">
+          <section class="home-panel progress-home-card">
+            <h3>Overall Progress</h3>
+            <div class="home-progress-layout">
+              <div class="ring" id="homeRing"><span id="homePercent">0%</span></div>
+              <div>
+                <p id="homeProgressText">0 readings completed</p>
+                <div class="mini-bar"><span id="homeMiniBar"></span></div>
+                <p class="subtle" id="homeProgressEncouragement">Keep going!</p>
+                <button class="progress-reset-btn" id="homeResetPlanBtn" type="button">Reset Plan</button>
+              </div>
+            </div>
+            <div class="mini-flourish">✤</div>
+          </section>
 
-        <section class="hero-card">
-          <div class="hero-icon">📖</div>
-          <div class="hero-main">
-            <p class="eyebrow">Continue where you left off</p>
-            <h3 id="homeReadingTitle">Reading 1 of 120</h3>
-            <p id="homePassageTitle" class="subtle"></p>
-            <div class="metrics" id="homeMetrics"></div>
-            <div class="bar"><span id="heroBar"></span></div>
-          </div>
-          <button class="primary-btn" id="homeReaderBtn">Continue Reading</button>
-        </section>
+          <section class="home-panel streak-card">
+            <h3>Current Streak</h3>
+            <div class="streak-main"><span class="streak-icon">🔥</span><strong id="streakCount">0</strong><span>days</span></div>
+            <p class="subtle" id="streakMessage">Keep going!</p>
+            <div class="streak-dots" id="streakDots" aria-label="Recent reading activity"></div>
+          </section>
 
-        <section class="jump-card">
-          <p class="eyebrow">Browse or start from another reading</p>
-          <div class="search-line">
-            <label class="search-box" for="jumpSearch">⌕
-              <input id="jumpSearch" type="search" placeholder="Search by reading number, surah name, theme, or range..." autocomplete="off" />
-            </label>
-            <button class="ghost-outline" id="browseAllBtn">☷ Browse All</button>
-          </div>
-          <div class="examples">Examples: <button data-query="37">37</button><button data-query="Yusuf">Yusuf</button><button data-query="Al-Kahf">Al-Kahf</button><button data-query="50-60">50-60</button><button data-query="100+">100+</button></div>
-          <div class="jump-results-wrap">
-            <div id="jumpResults" class="jump-results"></div>
-            <aside id="jumpPreview" class="preview-card"></aside>
-          </div>
-          <p class="gentle-note">💡 Choosing a starting reading only sets your current place. It will not mark earlier readings complete.</p>
-        </section>
+          <section class="home-panel current-upcoming-card">
+            <div class="current-upcoming-main">
+              <div class="current-reading-section">
+                <p class="eyebrow" id="homeCurrentEyebrow">Current Reading</p>
+                <div class="current-reading-layout">
+                  <div class="current-reading-icon">📖</div>
+                  <div>
+                    <h3 id="homeReadingTitle">Reading 1 of 120</h3>
+                    <p id="homePassageTitle" class="home-passage-title"></p>
+                    <p id="homeReadingTheme" class="subtle"></p>
+                    <div class="home-card-actions">
+                      <button class="primary-btn" id="homeReaderBtn">📖 Continue Reading <span>›</span></button>
+                      <a id="homeQuranLink" class="soft-link-btn inline-link" href="#" target="_blank" rel="noopener">Open on Quran.com ↗</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="upcoming-section">
+                <h3>Up Next</h3>
+                <div id="upcomingList" class="upcoming-list"></div>
+              </div>
+            </div>
+            <button class="ghost-outline browse-schedule-trigger" id="homeBrowseScheduleBtn" type="button">☷ View Full Schedule</button>
+          </section>
+        </div>
 
-        <section class="start-cycle-card">
-          <div class="cycle-icon">↻</div>
-          <div>
-            <p class="eyebrow">Restart Current Cycle</p>
-            <strong>Start this cycle over from Reading 1.</strong>
-            <p>This clears only this app’s completion checks. It will not create a completed cycle or increase the cycle number.</p>
-          </div>
-          <button class="gold-btn" id="startNewCycleBtn">Restart Current Cycle</button>
-        </section>
+        <div class="plan-safety-note">
+          <span aria-hidden="true">✓</span>
+          <p>Your progress is saved separately for each reading plan. Switch anytime without losing your place.</p>
+        </div>
       </section>
 
       <section class="content hidden" id="currentView">
@@ -146,21 +167,9 @@
       </section>
 
       <section class="content hidden" id="historyView">
-        <div class="section-heading"><p class="eyebrow">Reading History</p><h2>Your Journey</h2></div>
-        <div id="historyPlanTabs" class="history-plan-tabs" aria-label="History by reading plan"></div>
-        <p id="historyPlanNote" class="history-plan-note">History follows the currently selected reading plan.</p>
-        <div class="history-grid history-only-grid">
-          <section class="history-card history-past-card">
-            <div class="history-title-row">
-              <div>
-                <p class="eyebrow">Completed Cycles</p>
-                <h3>Past Cycles</h3>
-              </div>
-              <span id="historyTotal" class="history-count">0</span>
-            </div>
-            <div id="completedCyclesHistory"></div>
-          </section>
-        </div>
+        <div class="section-heading"><p class="eyebrow">Completed Cycles</p><h2>Completed Cycles</h2></div>
+        <p class="history-plan-note">Completed cycles from every reading plan are shown here together.</p>
+        <div id="completedCyclesByPlan" class="completed-cycles-by-plan"></div>
       </section>
 
       <section class="content hidden" id="progressView">
@@ -178,22 +187,11 @@
       </section>
 
       <aside class="right-panel">
-        <div class="panel-card progress-card">
-          <p class="eyebrow centered">Overall Progress</p>
-          <div class="ring" id="sideRing"><span id="sidePercent">0%</span></div>
-          <p id="progressText">0 readings completed in this cycle</p>
-          <div class="mini-stats"><span><strong id="sideCompleted">0</strong> Completed</span><span><strong id="sideRemaining">120</strong> Not checked</span></div>
+        <div class="panel-card plan-progress-card">
+          <p class="eyebrow">📖 Current Plan Progress</p>
+          <div id="planProgressRows" class="plan-progress-rows"></div>
         </div>
-        <div class="panel-card">
-          <p class="eyebrow" id="cyclePanelEyebrow">Current Plan</p>
-          <h3 id="cycleTitle">Cycle 1</h3>
-          <p id="cycleDetails" class="subtle">Reading 1 of 120</p>
-        </div>
-        <div class="panel-card">
-          <p class="eyebrow">Up Next</p>
-          <button class="next-card" id="upNextBtn"><span id="nextBadge">2</span><span><strong id="upNextTitle"></strong><small id="upNextTheme"></small></span><span>→</span></button>
-        </div>
-        <div class="tip-card"><strong>Tip</strong><p>No dates. No feeling behind. Just continue with the next reading.</p></div>
+
       </aside>
     </main>
   </div>
@@ -204,12 +202,15 @@
     <div class="modal-card browse-modal-card">
       <button class="modal-close" id="closeBrowseScheduleModal" aria-label="Close schedule browser">×</button>
       <p class="eyebrow" id="browseScheduleEyebrow">Browse Schedule</p>
-      <h2 id="browseScheduleTitle">Complete Qur'an</h2>
+      <h2 id="browseScheduleTitle">120 Day Plan</h2>
       <p id="browseScheduleNote" class="subtle">Choose any reading to make it your current place. Completed progress stays saved.</p>
       <label class="search-box browse-modal-search" for="browseScheduleSearch">⌕
         <input id="browseScheduleSearch" type="search" placeholder="Search this plan..." autocomplete="off" />
       </label>
       <div id="browseScheduleList" class="browse-schedule-list"></div>
+      <div class="browse-modal-footer">
+        <button class="ghost-outline danger-soft" id="resetPlanProgressBtn" type="button">Reset This Plan’s Progress</button>
+      </div>
     </div>
   </div>
 
