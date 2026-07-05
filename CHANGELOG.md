@@ -1,5 +1,36 @@
 # Changelog
 
+## v0.15.0
+- Renamed Full Schedule to My Schedule.
+- Renamed Completed Plans to History.
+- Removed the separate Progress page from navigation and markup.
+- Updated My Schedule subtitle to: Your reading plan at a glance.
+- Kept Home progress card as the single progress view.
+
+## v0.14.2
+- Removed the duplicate Current Reading text inside Full Schedule rows.
+- Changed the current row action area to show a light green 📍 Current badge.
+- Matched the Current badge width and shape to the Set as Current button.
+- Kept the Reading Info page Set as Current Reading button unchanged.
+
+## v0.14.1
+- Replaced the Full Schedule pin action button with a clearer **Set as Current** text button.
+- Kept the pin as a visual **📍 Current** badge for the active bookmark row.
+- Updated the Full Schedule helper note to match the clearer button wording.
+
+## v0.14.0
+- Added a Start New Cycle button to the Progress card when a plan reaches 100%.
+- Changed Current Streak week display to start on Sunday.
+- Renamed the menu item from Current Plan to Full Schedule.
+- Added a pin button in the Full Schedule modal to set any item as the current reading.
+- Updated the Full Schedule note so it no longer points users to the reading info page for bookmarking.
+
+## v0.13.9
+- Added percentage-based progress encouragement messages.
+- Updated 100% progress to show a completion message instead of a keep-going message.
+- Added a Delete button for completed cycle records in Completed Plans.
+- Deleting a completed cycle only removes that history entry and does not change current reading progress.
+
 ## v0.13.8
 - Separated browsing a reading from moving the current-reading bookmark.
 - Full Schedule clicks now open the reading information page as a preview without changing your place.

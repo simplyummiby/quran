@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quran Reading Companion v0.13.8</title>
+  <title>Quran Reading Companion v0.15.0</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Scheherazade+New:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -27,10 +27,9 @@
       <button class="mobile-menu-close" id="mobileMenuClose" type="button" aria-label="Close menu"><img src="assets/icons/x.svg" alt="" aria-hidden="true"></button>
       <button class="nav-item active" data-view="home"><img class="nav-icon" src="assets/icons/home.svg" alt="" aria-hidden="true"><span>Home</span></button>
       <button class="nav-item" data-view="current"><img class="nav-icon" src="assets/icons/book-open.svg" alt="" aria-hidden="true"><span>Current Reading</span></button>
-      <button class="nav-item" data-view="readings"><img class="nav-icon" src="assets/icons/clipboard-list.svg" alt="" aria-hidden="true"><span>Current Plan</span></button>
+      <button class="nav-item" data-view="readings"><img class="nav-icon" src="assets/icons/clipboard-list.svg" alt="" aria-hidden="true"><span>My Schedule</span></button>
       <button class="nav-item" data-action="openPlans"><img class="nav-icon" src="assets/icons/library.svg" alt="" aria-hidden="true"><span>Reading Plans</span></button>
-      <button class="nav-item" data-view="progress"><img class="nav-icon" src="assets/icons/chart.svg" alt="" aria-hidden="true"><span>Progress</span></button>
-      <button class="nav-item" data-view="history"><img class="nav-icon" src="assets/icons/check-circle.svg" alt="" aria-hidden="true"><span>Completed Plans</span></button>
+      <button class="nav-item" data-view="history"><img class="nav-icon" src="assets/icons/check-circle.svg" alt="" aria-hidden="true"><span>History</span></button>
       <button class="nav-item" data-modal="aboutSchedule"><img class="nav-icon" src="assets/icons/info.svg" alt="" aria-hidden="true"><span>About This App</span></button>
     </nav>
 
@@ -45,10 +44,9 @@
         </div>
         <button class="nav-item active" data-view="home"><img class="nav-icon" src="assets/icons/home.svg" alt="" aria-hidden="true"><span>Home</span></button>
         <button class="nav-item" data-view="current"><img class="nav-icon" src="assets/icons/book-open.svg" alt="" aria-hidden="true"><span>Current Reading</span></button>
-        <button class="nav-item" data-view="readings"><img class="nav-icon" src="assets/icons/clipboard-list.svg" alt="" aria-hidden="true"><span>Current Plan</span></button>
+        <button class="nav-item" data-view="readings"><img class="nav-icon" src="assets/icons/clipboard-list.svg" alt="" aria-hidden="true"><span>My Schedule</span></button>
         <button class="nav-item" data-action="openPlans"><img class="nav-icon" src="assets/icons/library.svg" alt="" aria-hidden="true"><span>Reading Plans</span></button>
-        <button class="nav-item" data-view="progress"><img class="nav-icon" src="assets/icons/chart.svg" alt="" aria-hidden="true"><span>Progress</span></button>
-        <button class="nav-item" data-view="history"><img class="nav-icon" src="assets/icons/check-circle.svg" alt="" aria-hidden="true"><span>Completed Plans</span></button>
+        <button class="nav-item" data-view="history"><img class="nav-icon" src="assets/icons/check-circle.svg" alt="" aria-hidden="true"><span>History</span></button>
         <button class="nav-item" data-modal="aboutSchedule"><img class="nav-icon" src="assets/icons/info.svg" alt="" aria-hidden="true"><span>About This App</span></button>
 
         <div class="quote-card">
@@ -101,7 +99,7 @@
                 <div id="upcomingList" class="upcoming-list"></div>
               </div>
             </div>
-            <button class="ghost-outline browse-schedule-trigger" id="homeBrowseScheduleBtn" type="button">☷ View Full Schedule</button>
+            <button class="ghost-outline browse-schedule-trigger" id="homeBrowseScheduleBtn" type="button">☷ View My Schedule</button>
           </section>
         </div>
 
@@ -150,7 +148,7 @@
       </section>
 
       <section class="content hidden" id="readingsView">
-        <div class="section-heading"><p class="eyebrow">Browse Schedule</p><h2>All Readings</h2></div>
+        <div class="section-heading"><p class="eyebrow">My Schedule</p><h2>My Schedule</h2><p class="subtle">Your reading plan at a glance.</p></div>
         <div class="filter-row">
           <button class="pill active" data-filter="all">All</button>
           <button class="pill" data-filter="completed">Completed</button>
@@ -160,23 +158,9 @@
       </section>
 
       <section class="content hidden" id="historyView">
-        <div class="section-heading"><p class="eyebrow">Completed Cycles</p><h2>Completed Cycles</h2></div>
-        <p class="history-plan-note">Completed cycles from every reading plan are shown here together.</p>
+        <div class="section-heading"><p class="eyebrow">History</p><h2>History</h2></div>
+        <p class="history-plan-note">Completed reading cycles from every reading plan are shown here together.</p>
         <div id="completedCyclesByPlan" class="completed-cycles-by-plan"></div>
-      </section>
-
-      <section class="content hidden" id="progressView">
-        <div class="section-heading"><p class="eyebrow">Progress</p><h2>Your Cycle</h2></div>
-        <div class="progress-large">
-          <div class="ring" id="bigRing"><span id="bigPercent">0%</span></div>
-          <p id="bigProgressText">0 readings completed in this cycle</p>
-        </div>
-        <div class="stat-grid">
-          <div class="stat-card"><strong id="cycleStat">1</strong><span>Current Cycle</span></div>
-          <div class="stat-card"><strong id="completedStat">0</strong><span>Completed</span></div>
-          <div class="stat-card"><strong id="remainingStat">120</strong><span>Not Checked</span></div>
-          <div class="stat-card"><strong id="currentStat">1</strong><span>Current Reading</span></div>
-        </div>
       </section>
 
       <aside class="right-panel" aria-label="Reading progress summary">
@@ -189,6 +173,7 @@
               <div class="mini-bar"><span id="homeMiniBar"></span></div>
               <p class="subtle" id="homeProgressEncouragement">Keep going!</p>
               <button class="progress-reset-btn" id="homeResetPlanBtn" type="button">Reset Plan</button>
+              <button class="progress-reset-btn start-cycle-progress-btn hidden" id="homeStartNewCycleBtn" type="button">Start New Cycle</button>
             </div>
           </div>
         </section>

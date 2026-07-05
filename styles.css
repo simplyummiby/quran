@@ -3331,3 +3331,104 @@ body {
   font-weight: 900;
   margin-top: 4px;
 }
+
+
+/* v0.13.9 completed-cycle cleanup */
+.history-delete-cycle {
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid #d8cbb9;
+  background: #fffaf2;
+  color: #7b4a35;
+  font-weight: 800;
+  font-size: .84rem;
+}
+.history-delete-cycle:hover {
+  background: #fff3e5;
+  border-color: #caa76f;
+}
+.completed-plan-table th:last-child,
+.completed-plan-table td:last-child {
+  width: 110px;
+  text-align: right;
+}
+
+
+/* v0.14.1 progress and full schedule polish */
+.start-cycle-progress-btn {
+  border-color: var(--green);
+  color: #fff;
+  background: linear-gradient(135deg, var(--green), var(--green-2));
+  margin-left: 8px;
+}
+.browse-schedule-row {
+  grid-template-columns: 72px minmax(0, 1fr) 132px 38px;
+}
+.browse-row-main {
+  display: block;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  color: var(--ink);
+  padding: 0;
+}
+.browse-row-main strong,
+.browse-row-main small {
+  display: block;
+}
+.browse-row-main small {
+  color: var(--muted);
+  margin-top: 3px;
+  line-height: 1.4;
+}
+.browse-row-current {
+  width: 132px;
+  min-height: 38px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: end;
+  border: 1px solid #cfe2cb;
+  background: #fffdf8;
+  color: var(--green);
+  font-weight: 900;
+  font-size: .78rem;
+  padding: 0 12px;
+  white-space: nowrap;
+}
+.browse-row-current.set-current-pill:hover,
+.browse-row-current.set-current-pill:focus-visible {
+  background: #eef6e9;
+  border-color: #cfe2cb;
+}
+.browse-row-current.current-badge,
+.browse-schedule-row.active .browse-row-current.current-badge {
+  background: #e6f1df;
+  color: var(--green);
+  border-color: #cfe2cb;
+  pointer-events: none;
+}
+.browse-row-check {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #dfe9d8;
+  background: #fffdf8;
+  color: var(--green);
+  font-weight: 900;
+}
+@media (max-width:760px){
+  .browse-schedule-row {
+    grid-template-columns: 58px minmax(0, 1fr) 112px 34px;
+  }
+  .browse-row-current {
+    width: 112px;
+    font-size: .72rem;
+    padding: 0 8px;
+  }
+}

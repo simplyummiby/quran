@@ -272,7 +272,7 @@ const state = {
 const surahCache = new Map();
 
 const $ = (id) => document.getElementById(id);
-const views = ['home','current','readings','history','progress'];
+const views = ['home','current','readings','history'];
 const PLAN_PROGRESS_KEY = 'qrc_plan_progress_v09';
 
 function activeSchedule(){ return SCHEDULES[activePlanId] || SCHEDULES.complete; }
@@ -532,10 +532,10 @@ function renderStreak(){
   if($('streakMessage')) $('streakMessage').textContent = streak ? 'Keep it up!' : 'Complete a reading to begin.';
   const dots = $('streakDots');
   if(!dots) return;
-  const dayLetters = ['M','T','W','T','F','S','S'];
+  const dayLetters = ['S','M','T','W','T','F','S'];
   const today = new Date();
   const start = new Date(today);
-  start.setDate(today.getDate() - ((today.getDay() + 6) % 7));
+  start.setDate(today.getDate() - today.getDay());
   const readDates = new Set((state.history || []).filter(item => item && ['marked-complete','manual-check'].includes(item.type) && item.date).map(item => new Date(item.date).toDateString()));
   dots.innerHTML = dayLetters.map((letter, idx) => {
     const d = new Date(start);
@@ -689,6 +689,14 @@ function renderWelcome(){
   const heading = $('welcomeHeading');
   if(heading) heading.textContent = hasAnySavedProgress() ? 'Welcome Back!' : 'Welcome!';
 }
+function progressEncouragement(pct){
+  if(pct <= 0) return 'Begin when you are ready.';
+  if(pct < 25) return 'A steady start — keep going.';
+  if(pct < 50) return 'You’re building consistency.';
+  if(pct < 75) return 'Halfway or more — beautiful progress.';
+  if(pct < 100) return 'Almost there — may Allah make it easy.';
+  return 'Plan complete — alḥamdulillāh! You can start a new cycle when ready.';
+}
 function renderHome(){
   renderWelcome();
   const schedule = activeSchedule();
@@ -704,7 +712,8 @@ function renderHome(){
   const homePercent = $('homePercent'); if(homePercent) homePercent.textContent = `${pct}%`;
   const homeProgressText = $('homeProgressText'); if(homeProgressText) homeProgressText.textContent = currentPlanProgressLabel();
   const homeMiniBar = $('homeMiniBar'); if(homeMiniBar) homeMiniBar.style.width = `${pct}%`;
-  const homeEnc = $('homeProgressEncouragement'); if(homeEnc) homeEnc.textContent = pct ? 'You’re making beautiful progress! Keep going!' : 'Begin when you are ready.';
+  const homeEnc = $('homeProgressEncouragement'); if(homeEnc) homeEnc.textContent = progressEncouragement(pct);
+  const homeStartCycleBtn = $('homeStartNewCycleBtn'); if(homeStartCycleBtn) homeStartCycleBtn.classList.toggle('hidden', pct < 100);
   const label = document.querySelector('.jump-card .eyebrow');
   if(label) label.textContent = schedule.id === 'complete' ? 'Browse or start from another reading' : 'Browse or start from another surah';
   const input = $('jumpSearch');
@@ -769,7 +778,7 @@ function readingRowSmallHtml(reading){
 function renderReadings(){
   const schedule = activeSchedule();
   const eyebrow = document.querySelector('#readingsView .section-heading .eyebrow');
-  if(eyebrow) eyebrow.textContent = 'Current Plan';
+  if(eyebrow) eyebrow.textContent = 'Full Schedule';
   const heading = document.querySelector('#readingsView .section-heading h2');
   if(heading) heading.textContent = schedule.name;
   const rows=readings.filter(r=> state.filter==='completed'?isCompleted(r.id):state.filter==='remaining'?!isCompleted(r.id):true);
@@ -882,8 +891,8 @@ function renderCompletedCyclesSection(schedule){
   const body = cycles.length ? `
     <div class="history-table-wrap">
       <table class="history-table completed-plan-table">
-        <thead><tr><th>Date</th><th>Duration</th></tr></thead>
-        <tbody>${cycles.map(c=>`<tr><td>${formatDate(c.completedAt)}</td><td>${c.duration || durationDays(c.startedAt,c.completedAt)}</td></tr>`).join('')}</tbody>
+        <thead><tr><th>Date</th><th>Duration</th><th>Action</th></tr></thead>
+        <tbody>${cycles.map(c=>`<tr><td>${formatDate(c.completedAt)}</td><td>${c.duration || durationDays(c.startedAt,c.completedAt)}</td><td><button class="history-delete-cycle" data-delete-cycle="${c.cycle}" data-delete-plan="${schedule.id}" data-delete-completed-at="${c.completedAt || ''}" type="button">Delete</button></td></tr>`).join('')}</tbody>
       </table>
     </div>` : `
     <div class="empty-history compact-empty-history">
@@ -907,6 +916,25 @@ function renderHistory(){
   const wrap = $('completedCyclesByPlan');
   if(!wrap) return;
   wrap.innerHTML = Object.values(SCHEDULES).map(schedule => renderCompletedCyclesSection(schedule)).join('');
+  wrap.querySelectorAll('[data-delete-cycle]').forEach(btn => btn.addEventListener('click', () => {
+    deleteCompletedCycle(btn.dataset.deletePlan, Number(btn.dataset.deleteCycle), btn.dataset.deleteCompletedAt);
+  }));
+}
+function deleteCompletedCycle(planId, cycle, completedAt){
+  const schedule = SCHEDULES[planId] || activeSchedule();
+  const confirmed = confirm(`Delete this completed ${schedule.name} cycle record?\n\nThis only removes the history entry. It will not change your current reading progress.`);
+  if(!confirmed) return;
+  const matchesRecord = item => item && item.type === 'completed-cycle' && Number(item.cycle) === Number(cycle) && (item.completedAt || '') === (completedAt || '') && (item.plan || planId) === planId;
+  if(planId === activePlanId){
+    state.history = (state.history || []).filter(item => !matchesRecord(item));
+  } else {
+    const stored = planProgress[planId] || defaultPlanProgress(planId);
+    stored.history = (stored.history || []).filter(item => !matchesRecord(item));
+    planProgress[planId] = stored;
+  }
+  save();
+  renderAll();
+  haptic(15);
 }
 
 async function fetchSurahText(surahNumber){
@@ -1291,16 +1319,23 @@ function renderBrowseScheduleModal(){
   const q = ($('browseScheduleSearch')?.value || '').trim();
   const rows = readings.filter(r => matchReading(r, q));
   if($('browseScheduleTitle')) $('browseScheduleTitle').textContent = schedule.name;
-  if($('browseScheduleEyebrow')) $('browseScheduleEyebrow').textContent = schedule.browseTitle;
-  if($('browseScheduleNote')) $('browseScheduleNote').textContent = `Click a ${schedule.unitSingular} title to preview it. Use “Set as Current” on the reading page when you want to move your bookmark.`;
+  if($('browseScheduleEyebrow')) $('browseScheduleEyebrow').textContent = 'My Schedule';
+  if($('browseScheduleNote')) $('browseScheduleNote').textContent = 'Your reading plan at a glance.';
   const list = $('browseScheduleList');
   if(!list) return;
-  list.innerHTML = rows.length ? rows.map(r => `<button class="browse-schedule-row ${r.id===state.current?'active':''} ${isCompleted(r.id)?'completed':''}" data-id="${r.id}" type="button">
+  list.innerHTML = rows.length ? rows.map(r => `<div class="browse-schedule-row ${r.id===state.current?'active':''} ${isCompleted(r.id)?'completed':''}" data-id="${r.id}">
     <span class="reading-num"><small>${schedule.itemLabel}</small><strong>${schedule.id === 'juzAmma' ? r.quranSurah : r.id}</strong></span>
-    <span><strong>${passageTitleNumbered(r)}</strong>${r.id===state.current?'<small class="current-marker">📍 Current Reading</small>':''}${readingRowSmallHtml(r)}</span>
-    <span class="browse-row-check" role="checkbox" aria-checked="${isCompleted(r.id) ? 'true' : 'false'}" tabindex="0" title="Mark this ${schedule.unitSingular} complete or incomplete">${isCompleted(r.id) ? '✓' : '○'}</span>
-  </button>`).join('') : `<p class="subtle">No ${schedule.unitPlural} matched your search.</p>`;
-  list.querySelectorAll('.browse-schedule-row').forEach(btn => btn.addEventListener('click', () => { viewReadingInfo(Number(btn.dataset.id)); closeBrowseModal(); }));
+    <button class="browse-row-main" data-preview-reading="${r.id}" type="button"><strong>${passageTitleNumbered(r)}</strong>${readingRowSmallHtml(r)}</button>
+    ${r.id===state.current ? '<span class="browse-row-current current-badge" aria-label="Current reading">📍 Current</span>' : `<button class="browse-row-current set-current-pill" data-set-current-reading="${r.id}" type="button" title="Set as current ${schedule.unitSingular}" aria-label="Set ${schedule.itemLabel} ${schedule.id === 'juzAmma' ? r.quranSurah : r.id} as current ${schedule.unitSingular}">Set as Current</button>`}
+    <button class="browse-row-check" type="button" aria-pressed="${isCompleted(r.id) ? 'true' : 'false'}" title="Mark this ${schedule.unitSingular} complete or incomplete">${isCompleted(r.id) ? '✓' : '○'}</button>
+  </div>`).join('') : `<p class="subtle">No ${schedule.unitPlural} matched your search.</p>`;
+  list.querySelectorAll('[data-preview-reading]').forEach(btn => btn.addEventListener('click', () => { viewReadingInfo(Number(btn.dataset.previewReading)); closeBrowseModal(); }));
+  list.querySelectorAll('[data-set-current-reading]').forEach(btn => btn.addEventListener('click', event => {
+    event.preventDefault();
+    event.stopPropagation();
+    setStartingReading(Number(btn.dataset.setCurrentReading));
+    closeBrowseModal();
+  }));
   list.querySelectorAll('.browse-row-check').forEach(check => {
     const toggleFromBrowse = (event) => {
       event.preventDefault();
@@ -1312,11 +1347,6 @@ function renderBrowseScheduleModal(){
       renderBrowseScheduleModal();
     };
     check.addEventListener('click', toggleFromBrowse);
-    check.addEventListener('keydown', event => {
-      if(event.key === 'Enter' || event.key === ' '){
-        toggleFromBrowse(event);
-      }
-    });
   });
 }
 
@@ -1392,6 +1422,7 @@ $('browseScheduleModal')?.addEventListener('click',e=>{ if(e.target.id === 'brow
 $('browseScheduleSearch')?.addEventListener('input',renderBrowseScheduleModal);
 $('resetPlanProgressBtn')?.addEventListener('click',resetCurrentPlanProgress);
 $('homeResetPlanBtn')?.addEventListener('click',resetCurrentPlanProgress);
+$('homeStartNewCycleBtn')?.addEventListener('click',()=>startNewCycle({recordCompleted:true}));
 if($('jumpSearch')) $('jumpSearch').addEventListener('input',e=>{state.query=e.target.value;renderJump();}); if($('browseAllBtn')) $('browseAllBtn').addEventListener('click',()=>{state.query='';$('jumpSearch').value='';renderJump();}); if($('homeBrowseScheduleBtn')) $('homeBrowseScheduleBtn').addEventListener('click',openBrowseModal); document.querySelectorAll('[data-query]').forEach(btn=>btn.addEventListener('click',()=>{state.query=btn.dataset.query;if($('jumpSearch')) $('jumpSearch').value=state.query;renderJump();}));
 document.querySelectorAll('[data-action="openPlans"]').forEach(btn=>btn.addEventListener('click', (event)=>{ event.preventDefault(); openPlanModal(); }));
 document.addEventListener('click', (event)=>{
