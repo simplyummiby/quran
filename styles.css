@@ -2861,3 +2861,186 @@ h3,
   font-size: 1.08rem;
   min-height: 54px;
 }
+
+/* v0.13.0: final responsive layout philosophy
+   Desktop: sidebar + content + progress panel
+   Tablet: sidebar + content; progress/streak below reading content
+   Phone: hamburger + single column */
+
+/* Baseline desktop: centered header, no top links, no hamburger */
+.topbar {
+  grid-template-columns: 1fr !important;
+  justify-items: center !important;
+  text-align: center !important;
+  min-height: 104px !important;
+  padding: 18px 32px !important;
+}
+.brand {
+  grid-column: 1 !important;
+  display: block !important;
+  justify-self: center !important;
+  text-align: center !important;
+}
+.brand-icon,
+.top-actions {
+  display: none !important;
+}
+.mobile-menu-toggle,
+.mobile-menu-panel,
+.mobile-menu-backdrop {
+  display: none !important;
+}
+.layout {
+  display: grid !important;
+  grid-template-columns: 280px minmax(0, 1fr) 360px !important;
+  gap: 28px !important;
+  padding: 24px 32px 40px !important;
+}
+.layout > .sidebar {
+  display: flex !important;
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+}
+.content {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+}
+.right-panel {
+  grid-column: 3 !important;
+  grid-row: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-self: start !important;
+  padding-top: clamp(108px, 10vw, 138px) !important;
+}
+.home-dashboard-head {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  justify-items: center !important;
+  text-align: center !important;
+  gap: 18px !important;
+  max-width: 1040px !important;
+  margin: 18px auto 28px !important;
+}
+.home-dashboard-head .home-welcome {
+  grid-row: 1 !important;
+  width: 100% !important;
+  text-align: center !important;
+  margin: 0 auto !important;
+}
+.home-dashboard-head .plan-home-card {
+  grid-row: 2 !important;
+  width: min(620px, 100%) !important;
+  margin: 0 auto !important;
+}
+
+/* Tablet: restore sidebar; remove third column; stack support cards below main content. */
+@media (min-width: 761px) and (max-width: 1180px) {
+  .topbar {
+    grid-template-columns: 1fr !important;
+    min-height: 104px !important;
+    padding: 16px 24px !important;
+  }
+  .mobile-menu-toggle,
+  .mobile-menu-panel,
+  .mobile-menu-backdrop {
+    display: none !important;
+  }
+  .layout {
+    grid-template-columns: 240px minmax(0, 1fr) !important;
+    gap: 24px !important;
+    padding: 22px 24px 36px !important;
+  }
+  .layout > .sidebar {
+    display: flex !important;
+    grid-column: 1 !important;
+    grid-row: 1 / span 2 !important;
+    padding-right: 14px;
+  }
+  .content {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+  }
+  .right-panel {
+    grid-column: 2 !important;
+    grid-row: 2 !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 16px !important;
+    padding-top: 0 !important;
+    margin-top: 18px !important;
+  }
+  .right-panel .home-panel {
+    min-width: 0;
+  }
+  .sidebar-progress-card .home-progress-layout {
+    grid-template-columns: 1fr !important;
+  }
+  .quote-card {
+    display: block !important;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 980px) {
+  .layout {
+    grid-template-columns: 220px minmax(0, 1fr) !important;
+    gap: 20px !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+  .right-panel {
+    grid-template-columns: 1fr !important;
+  }
+  .quote-card {
+    padding: 18px;
+    font-size: .92rem;
+  }
+}
+
+/* Phone: hamburger only, one column, support cards below reading content. */
+@media (max-width: 760px) {
+  .topbar {
+    position: sticky !important;
+    top: 0;
+    grid-template-columns: 46px minmax(0, 1fr) 46px !important;
+    min-height: 92px !important;
+    padding: 12px 14px !important;
+    gap: 10px !important;
+  }
+  .mobile-menu-toggle {
+    display: grid !important;
+    place-items: center !important;
+    grid-column: 1 !important;
+    justify-self: start !important;
+  }
+  .brand {
+    grid-column: 2 !important;
+  }
+  .mobile-menu-panel {
+    display: grid !important;
+  }
+  .mobile-menu-panel.hidden,
+  .mobile-menu-backdrop.hidden {
+    display: none !important;
+  }
+  .mobile-menu-backdrop:not(.hidden) {
+    display: block !important;
+  }
+  .layout {
+    display: block !important;
+    padding: 14px 16px 34px !important;
+  }
+  .layout > .sidebar {
+    display: none !important;
+  }
+  .right-panel {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    padding-top: 0 !important;
+    margin-top: 18px !important;
+  }
+  .quote-card {
+    display: none !important;
+  }
+}
