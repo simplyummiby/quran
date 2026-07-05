@@ -3202,8 +3202,8 @@ body {
 .current-upcoming-card { padding:28px 32px !important; }
 .current-upcoming-main { grid-template-columns:1fr !important; gap:0 !important; }
 .current-reading-section { border-right:0 !important; padding-right:0 !important; border-bottom:1px solid var(--line); padding-bottom:22px; }
-.current-reading-section .current-reading-layout { grid-template-columns:minmax(0,1fr) 270px !important; gap:28px !important; align-items:center !important; }
-.current-reading-art { width:100%; max-width:270px; height:175px; overflow:hidden; border-radius:16px; box-shadow:0 14px 30px rgba(54,37,18,.14); align-self:center; }
+.current-reading-section .current-reading-layout { grid-template-columns:minmax(0,1fr) 340px !important; gap:28px !important; }
+.current-reading-art { width:100%; max-width:340px; height:220px; overflow:hidden; border-radius:16px; box-shadow:0 12px 25px rgba(54,37,18,.13); }
 .current-reading-art img { width:100%; height:100%; object-fit:cover; display:block; }
 #homeReadingTitle { font-family:var(--font-reading) !important; color:var(--deep-green) !important; font-size:clamp(2rem, 3vw, 2.65rem) !important; font-weight:600 !important; }
 .home-passage-title { font-family:var(--font-reading) !important; color:#2f302b !important; font-size:1.22rem; font-weight:500 !important; }
@@ -3237,8 +3237,8 @@ body {
   .right-panel { padding-top:0 !important; }
   .current-plan-display { grid-template-columns:170px minmax(0,1fr) !important; min-height:190px !important; padding:24px !important; }
   .plan-art { width:150px; height:150px; }
-  .current-reading-section .current-reading-layout { grid-template-columns:minmax(0,1fr) 240px !important; align-items:center !important; }
-  .current-reading-art { max-width:240px; height:156px; }
+  .current-reading-section .current-reading-layout { grid-template-columns:minmax(0,1fr) 260px !important; }
+  .current-reading-art { height:180px; }
   .switch-plan-btn { grid-column:2 !important; }
 }
 @media (max-width:760px){
@@ -3256,7 +3256,7 @@ body {
   .switch-plan-btn { grid-column:auto !important; justify-self:center !important; width:auto !important; }
   .current-upcoming-card { padding:20px !important; }
   .current-reading-section .current-reading-layout { grid-template-columns:1fr !important; text-align:left !important; }
-  .current-reading-art { order:-1; max-width:100%; height:150px; }
+  .current-reading-art { order:-1; max-width:100%; height:160px; }
   .current-reading-section .eyebrow::after, .upcoming-section h3::after { margin-left:0; }
   .right-panel { padding-top:0 !important; }
 }
@@ -3306,4 +3306,28 @@ body {
   .mobile-menu-panel {
     background: #fffdf8 !important;
   }
+}
+
+/* v0.13.8: explicit bookmark behavior */
+.reading-intent-actions {
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+  margin-top: 18px;
+}
+.reading-intent-actions .complete-btn,
+.reading-intent-actions .set-current-btn {
+  margin-top: 0;
+}
+.set-current-btn {
+  width: min(540px, 100%);
+  background: #f4f8ef;
+  border: 1px solid #d7e5d3;
+  color: var(--green);
+}
+.current-marker {
+  display: block;
+  color: var(--green) !important;
+  font-weight: 900;
+  margin-top: 4px;
 }

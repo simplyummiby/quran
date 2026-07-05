@@ -1,9 +1,11 @@
 # Changelog
 
-## v0.13.4
-- Refined Current Reading image proportions on the home page.
-- Reduced the Current Reading photo size for better balance with the Current Plan photo.
-- Vertically centered the Current Reading photo with its text and added a slightly softer shadow.
+## v0.13.8
+- Separated browsing a reading from moving the current-reading bookmark.
+- Full Schedule clicks now open the reading information page as a preview without changing your place.
+- Added an explicit “Set as Current Reading” action on the reading information page.
+- Reading Mode from a preview opens as casual reading unless the reading is set as current.
+- Kept completion progress separate from the bookmark so starting at pages 133–134 does not mark earlier readings complete.
 
 ## v0.13.3
 - Replaced home page placeholder SVG artwork with photographic PNG assets.

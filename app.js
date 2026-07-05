@@ -266,7 +266,8 @@ const state = {
   readerTheme: localStorage.getItem('qrc_reader_theme_v082') || 'green',
   readerScroll: JSON.parse(localStorage.getItem('qrc_reader_scroll_v08') || '{}'),
   readerReadingId: null,
-  readerContext: 'cycle'
+  readerContext: 'cycle',
+  previewReadingId: null
 };
 const surahCache = new Map();
 
@@ -361,6 +362,8 @@ normalizeState();
 cleanAllCompletedCycleHistory();
 save();
 function currentReading(){ return readings[state.current - 1] || readings[0]; }
+function currentInfoReading(){ return readings[(state.previewReadingId || state.current) - 1] || currentReading(); }
+function isPreviewingDifferentReading(){ return Boolean(state.previewReadingId && state.previewReadingId !== state.current); }
 function isCompleted(id){ return state.completed.has(id); }
 function completedCycleAlreadyRecorded(){
   return state.history.some(item => item && item.type === 'completed-cycle' && item.cycle === state.cycle && item.plan === activePlanId);
@@ -562,11 +565,7 @@ function renderUpcoming(){
     </button>`;
   }).join('');
   wrap.querySelectorAll('[data-upcoming-id]').forEach(btn=>btn.addEventListener('click',()=>{
-    state.current = Number(btn.dataset.upcomingId);
-    state.completionAck = null;
-    save();
-    renderAll();
-    showView('current');
+    viewReadingInfo(Number(btn.dataset.upcomingId));
   }));
 }
 function renderHistoryPlanTabs(){
@@ -621,7 +620,7 @@ function renderCurrent(){
     return;
   }
   const schedule = activeSchedule();
-  const reading=currentReading();
+  const reading=currentInfoReading();
   $('readingCard').classList.remove('hidden','is-exiting');
   $('aboutReadingPanel').classList.remove('hidden');
   $('completionCard').classList.add('hidden');
@@ -629,6 +628,11 @@ function renderCurrent(){
   $('passageList').innerHTML = isPageReading(reading) ? `<div class="passage page-passage"><h3>${pageRangeText(reading)}</h3><p>Reading ${reading.id} of ${readings.length}</p></div>` : reading.passages.map((item, idx)=>`<div class="passage"><h3>${item.name.startsWith('Review:') ? escapeHtml(item.name) : surahTitleHtml(passageSurahNumber(reading, idx), item.name)}</h3>${item.name.startsWith('Review:')?'':`<p>${item.start} – ${item.end}</p>`}</div>`).join('');
   $('readingTheme').textContent=reading.theme; $('readingDescription').innerHTML=addSalawat(reading.description); $('currentMetrics').innerHTML=metricHtml(reading); $('quranLink').href=quranUrl(reading);
   $('completeBtn').innerHTML=`<span id="completeBox">${isCompleted(reading.id)?'☑':'☐'}</span> ${isCompleted(reading.id)?'Completed':'Mark Complete'}`;
+  const setBtn = $('setCurrentReadingBtn');
+  if(setBtn){
+    setBtn.classList.toggle('hidden', !isPreviewingDifferentReading());
+    setBtn.textContent = `📍 Set as Current ${schedule.itemLabel}`;
+  }
 }
 function renderCompletionAck(){
   const schedule = activeSchedule();
@@ -776,7 +780,7 @@ function renderReadings(){
     </label>
     <button class="reading-row-main" data-id="${r.id}">
       ${readingNumberBadge(r)}
-      <span><strong>${passageTitleNumbered(r)}</strong>${readingRowSmallHtml(r)}</span>
+      <span><strong>${passageTitleNumbered(r)}</strong>${r.id===state.current?'<small class="current-marker">📍 Current Reading</small>':''}${readingRowSmallHtml(r)}</span>
     </button>
   </div>`).join('');
   document.querySelectorAll('.reading-row-main').forEach(row=>row.addEventListener('click',()=>{state.current=Number(row.dataset.id);save();showView('current');renderAll();}));
@@ -833,8 +837,15 @@ function renderJumpPreview(){
   $('setStartBtn').addEventListener('click',()=>setStartingReading(r.id));
   $('previewReadBtn').addEventListener('click',()=>openReader(r.id,{casual:true}));
 }
+function viewReadingInfo(id){
+  state.previewReadingId = Math.min(readings.length, Math.max(1, Number(id) || 1));
+  state.completionAck = null;
+  renderAll();
+  showView('current');
+}
 function setStartingReading(id){
   state.current=id;
+  state.previewReadingId=null;
   state.completionAck=null;
   state.history.push({type:'set-current-reading',cycle:state.cycle,plan:activePlanId,reading:id,date:new Date().toISOString()});
   save(); renderAll(); showView('current');
@@ -861,7 +872,7 @@ function startNewCycle({recordCompleted=false}={}){
   state.history.push({type:'restart-current-cycle',cycle:state.cycle,plan:activePlanId,date:new Date().toISOString()});
   save(); renderAll(); showView('home');
 }
-function showView(name){ if(name !== 'current') state.completionAck=null; views.forEach(v=>$(`${v}View`).classList.toggle('hidden',v!==name)); document.querySelectorAll('[data-view]').forEach(btn=>btn.classList.toggle('active',btn.dataset.view===name)); renderCurrent(); }
+function showView(name){ if(name !== 'current') { state.completionAck=null; state.previewReadingId=null; } views.forEach(v=>$(`${v}View`).classList.toggle('hidden',v!==name)); document.querySelectorAll('[data-view]').forEach(btn=>btn.classList.toggle('active',btn.dataset.view===name)); renderCurrent(); }
 function renderCompletedCyclesSection(schedule){
   const progress = progressForPlan(schedule.id);
   const cycles = (progress.history || [])
@@ -1093,7 +1104,7 @@ function renderReaderGroups(groups){
   updateReaderModeButtons();
   updateReaderProgress();
 }
-async function openReader(readingId=state.current,{casual=false}={}){
+async function openReader(readingId=(state.previewReadingId || state.current),{casual=false}={}){
   state.readerReadingId=readingId;
   state.readerContext=casual ? 'casual' : 'cycle';
   const reading=readerReading();
@@ -1195,17 +1206,26 @@ async function navigateReader(delta){
 function closeReader(){ hideResumePrompt(); saveReaderScroll(); $('readerModal').classList.add('hidden'); document.body.classList.remove('reading-mode-open'); state.readerReadingId=null; state.readerContext='cycle'; }
 function markCurrentComplete(){
   haptic(20);
-  const id=state.current;
+  const infoReading = currentInfoReading();
+  const reader = state.readerReadingId ? readerReading() : null;
+  const isCasualReader = state.readerContext === 'casual';
+  const id = reader ? reader.id : infoReading.id;
   const wasCompleted=isCompleted(id);
   if(wasCompleted){
     state.completed.delete(id);
+    if(id === state.current) removeRecordedCompletionForCurrentCycle();
     state.completionAck=null;
   } else {
     state.completed.add(id);
     state.history.push({type:'marked-complete',cycle:state.cycle,plan:activePlanId,reading:id,date:new Date().toISOString()});
     recordCompletedCycleIfNeeded();
-    state.current = id < readings.length ? id + 1 : id;
-    state.completionAck={completedId:id};
+    if(!isCasualReader && id === state.current){
+      state.current = id < readings.length ? id + 1 : id;
+      state.previewReadingId = null;
+      state.completionAck={completedId:id};
+    } else {
+      state.completionAck=null;
+    }
   }
   save();
   closeReader();
@@ -1272,15 +1292,15 @@ function renderBrowseScheduleModal(){
   const rows = readings.filter(r => matchReading(r, q));
   if($('browseScheduleTitle')) $('browseScheduleTitle').textContent = schedule.name;
   if($('browseScheduleEyebrow')) $('browseScheduleEyebrow').textContent = schedule.browseTitle;
-  if($('browseScheduleNote')) $('browseScheduleNote').textContent = `Click a ${schedule.unitSingular} title to make it your current place, or use the circle to mark it complete. Progress in other plans stays saved.`;
+  if($('browseScheduleNote')) $('browseScheduleNote').textContent = `Click a ${schedule.unitSingular} title to preview it. Use “Set as Current” on the reading page when you want to move your bookmark.`;
   const list = $('browseScheduleList');
   if(!list) return;
   list.innerHTML = rows.length ? rows.map(r => `<button class="browse-schedule-row ${r.id===state.current?'active':''} ${isCompleted(r.id)?'completed':''}" data-id="${r.id}" type="button">
     <span class="reading-num"><small>${schedule.itemLabel}</small><strong>${schedule.id === 'juzAmma' ? r.quranSurah : r.id}</strong></span>
-    <span><strong>${passageTitleNumbered(r)}</strong>${readingRowSmallHtml(r)}</span>
+    <span><strong>${passageTitleNumbered(r)}</strong>${r.id===state.current?'<small class="current-marker">📍 Current Reading</small>':''}${readingRowSmallHtml(r)}</span>
     <span class="browse-row-check" role="checkbox" aria-checked="${isCompleted(r.id) ? 'true' : 'false'}" tabindex="0" title="Mark this ${schedule.unitSingular} complete or incomplete">${isCompleted(r.id) ? '✓' : '○'}</span>
   </button>`).join('') : `<p class="subtle">No ${schedule.unitPlural} matched your search.</p>`;
-  list.querySelectorAll('.browse-schedule-row').forEach(btn => btn.addEventListener('click', () => { setStartingReading(Number(btn.dataset.id)); closeBrowseModal(); }));
+  list.querySelectorAll('.browse-schedule-row').forEach(btn => btn.addEventListener('click', () => { viewReadingInfo(Number(btn.dataset.id)); closeBrowseModal(); }));
   list.querySelectorAll('.browse-row-check').forEach(check => {
     const toggleFromBrowse = (event) => {
       event.preventDefault();
@@ -1361,7 +1381,7 @@ function renderAll(){ renderCurrent(); renderHome(); renderReadings(); renderHis
 $('completeBtn')?.addEventListener('click',markCurrentComplete);
 $('beginNextBtn')?.addEventListener('click',()=>{ if(state.completionAck && state.completionAck.completedId===readings.length){ startNewCycle({recordCompleted:true}); return; } state.completionAck=null; save(); renderAll(); });
 $('undoCompleteBtn')?.addEventListener('click',undoLastCompletion);
-$('prevBtn')?.addEventListener('click',()=>{state.completionAck=null;state.current=Math.max(1,state.current-1);save();renderAll();}); $('nextBtn')?.addEventListener('click',()=>{state.completionAck=null;state.current=Math.min(readings.length,state.current+1);save();renderAll();}); $('upNextBtn')?.addEventListener('click',()=>{state.completionAck=null;state.current=Math.min(readings.length,state.current+1);save();renderAll();showView('current');});
+$('prevBtn')?.addEventListener('click',()=>{state.completionAck=null;state.previewReadingId=Math.max(1,(state.previewReadingId || state.current)-1);renderAll();}); $('nextBtn')?.addEventListener('click',()=>{state.completionAck=null;state.previewReadingId=Math.min(readings.length,(state.previewReadingId || state.current)+1);renderAll();}); $('upNextBtn')?.addEventListener('click',()=>{viewReadingInfo(Math.min(readings.length,state.current+1));});
 $('startNewCycleBtn')?.addEventListener('click',()=>startNewCycle());
 $('currentPlanBtn')?.addEventListener('click',openPlanModal);
 $('closePlanModal')?.addEventListener('click',closePlanModal);
@@ -1382,8 +1402,9 @@ document.addEventListener('click', (event)=>{
 });
 document.querySelectorAll('[data-view]').forEach(btn=>btn.addEventListener('click',()=>{ if(btn.dataset.view==='readings'){ openBrowseModal(); return; } showView(btn.dataset.view); })); document.querySelectorAll('[data-filter]').forEach(btn=>btn.addEventListener('click',()=>{state.filter=btn.dataset.filter;document.querySelectorAll('[data-filter]').forEach(p=>p.classList.toggle('active',p.dataset.filter===state.filter));renderReadings();}));
 
-$('homeReaderBtn')?.addEventListener('click',openReader);
-$('openReaderBtn')?.addEventListener('click',openReader);
+$('homeReaderBtn')?.addEventListener('click',()=>openReader(state.current,{casual:false}));
+$('openReaderBtn')?.addEventListener('click',()=>openReader(state.previewReadingId || state.current,{casual:isPreviewingDifferentReading()}));
+$('setCurrentReadingBtn')?.addEventListener('click',()=>{ if(state.previewReadingId) setStartingReading(state.previewReadingId); renderAll(); showView('current'); });
 $('readerCompleteBtn')?.addEventListener('click',markCurrentComplete);
 $('closeReaderModal')?.addEventListener('click',closeReader);
 $('readerExitBottomBtn')?.addEventListener('click',closeReader);
