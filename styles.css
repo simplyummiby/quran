@@ -3432,3 +3432,13 @@ body {
     padding: 0 8px;
   }
 }
+
+
+/* v0.15.1 concise reading cards and no time estimates */
+.reading-card .passage h3 {
+  font-size: clamp(1.75rem, 3.6vw, 2.7rem);
+}
+.reading-card .page-passage h3 {
+  font-size: clamp(1.9rem, 4vw, 2.85rem);
+}
+

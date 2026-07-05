@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.15.1
+- Rewrote the About This App modal to be shorter and plan-neutral.
+- Kept Arabic text and English translation details in About This App.
+- Reduced the large title size inside the Current Reading card.
+- Removed time estimates from reading metrics, schedule rows, search results, and Reading Mode subtitles.
+
 ## v0.15.0
 - Renamed Full Schedule to My Schedule.
 - Renamed Completed Plans to History.

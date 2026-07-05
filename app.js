@@ -497,7 +497,7 @@ function addSalawat(text='') {
     .replace(/\bthe Messenger\b(?!\s*ﷺ)/gi, match => `${match} ﷺ`);
 }
 function quranUrl(reading){ return isPageReading(reading) ? `https://quran.com/page/${reading.pageStart}` : `https://quran.com/${reading.quranSurah}?startingVerse=${reading.quranAyah}`; }
-function metricHtml(reading){ if(isPageReading(reading)) return `<span class="metric">🕰 <span><strong>${reading.minutes}</strong><small>Rough guide</small></span></span><span class="metric">📄 <span><strong>${reading.pages} pages</strong><small>In mushaf</small></span></span>`; return `<span class="metric">🕰 <span><strong>${reading.minutes}</strong><small>Rough guide</small></span></span><span class="metric">📖 <span><strong>${reading.ayat} āyāt</strong><small>Approx. length</small></span></span><span class="metric">📄 <span><strong>${reading.pages} pages</strong><small>In mushaf</small></span></span>`; }
+function metricHtml(reading){ if(isPageReading(reading)) return `<span class="metric">📄 <span><strong>${reading.pages} pages</strong><small>In mushaf</small></span></span>`; return `<span class="metric">📖 <span><strong>${reading.ayat} āyāt</strong><small>Approx. length</small></span></span><span class="metric">📄 <span><strong>${reading.pages} pages</strong><small>In mushaf</small></span></span>`; }
 function formatDate(iso){
   if(!iso) return 'Not recorded';
   return new Date(iso).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});
@@ -769,7 +769,7 @@ function readingNumberBadge(reading){
   return `<span class="reading-num"><small>${schedule.itemLabel}</small><strong>${n}</strong></span>`;
 }
 function readingRowMeta(reading){
-  return isPageReading(reading) ? '' : `${reading.theme} • ${reading.minutes} • ${reading.ayat} āyāt`;
+  return isPageReading(reading) ? '' : `${reading.theme} • ${reading.ayat} āyāt`;
 }
 function readingRowSmallHtml(reading){
   const meta = readingRowMeta(reading);
@@ -834,7 +834,7 @@ function renderJump(){
   if(!rows.find(r=>r.id===state.selectedJump)) state.selectedJump=(rows[0]||readings[0]).id;
   const resultLabel = state.query.trim() ? `${rows.length} matching ${rows.length===1?schedule.unitSingular:schedule.unitPlural}` : `All ${readings.length} ${schedule.unitPlural}`;
   $('jumpResults').innerHTML = rows.length
-    ? `<p class="results-label">${resultLabel}</p>` + rows.map(r=>`<button class="jump-row ${r.id===state.selectedJump?'active':''}" data-id="${r.id}"><span class="num"><small>${schedule.itemLabel}</small><strong>${schedule.id === 'juzAmma' ? r.quranSurah : r.id}</strong></span><span><strong>${passageTitleNumbered(r)}</strong><small>${r.theme}</small></span><span>${r.minutes}</span></button>`).join('')
+    ? `<p class="results-label">${resultLabel}</p>` + rows.map(r=>`<button class="jump-row ${r.id===state.selectedJump?'active':''}" data-id="${r.id}"><span class="num"><small>${schedule.itemLabel}</small><strong>${schedule.id === 'juzAmma' ? r.quranSurah : r.id}</strong></span><span><strong>${passageTitleNumbered(r)}</strong><small>${r.theme}</small></span></button>`).join('')
     : `<p class="subtle">No ${schedule.unitPlural} matched your search.</p>`;
   document.querySelectorAll('.jump-row').forEach(btn=>btn.addEventListener('click',()=>{state.selectedJump=Number(btn.dataset.id);renderJump();}));
   renderJumpPreview();
@@ -1098,7 +1098,7 @@ function renderReaderShell(){
   const reading=readerReading();
   const label = isPageReading(reading) ? pageRangeText(reading) : (schedule.id === 'complete' ? `Reading ${reading.id} of ${readings.length}` : `${formatSurahNumber(reading.quranSurah)} ${reading.passages[0].name}`);
   $('readerModalTitle').textContent=label;
-  $('readerSubtitle').textContent=`${passageTitleNumbered(reading)} • ${reading.minutes} • ${reading.ayat} āyāt`; 
+  $('readerSubtitle').textContent = isPageReading(reading) ? `Reading ${reading.id} of ${readings.length}` : `${passageTitleNumbered(reading)} • ${reading.ayat} āyāt`; 
   $('readerPositionPill').textContent = isPageReading(reading) ? `${schedule.name} • Reading ${reading.id}` : (schedule.id === 'complete' ? `Reading ${reading.id} of ${readings.length}` : `${schedule.name} • Surah ${reading.quranSurah}`);
   $('readerQuranLink').href=quranUrl(reading);
   const prevReading = readings[reading.id - 2];
