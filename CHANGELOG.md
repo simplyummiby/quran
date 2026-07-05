@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.13.4
+- Refined Current Reading image proportions on the home page.
+- Reduced the Current Reading photo size for better balance with the Current Plan photo.
+- Vertically centered the Current Reading photo with its text and added a slightly softer shadow.
+
 ## v0.13.3
 - Replaced home page placeholder SVG artwork with photographic PNG assets.
 - Current Plan now uses `assets/images/current-plan.png`.
