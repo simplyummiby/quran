@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quran Reading Companion v0.12.8</title>
+  <title>Quran Reading Companion v0.12.9</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Scheherazade+New:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
 <body>
   <div class="app-shell">
     <header class="topbar">
-      <button class="mobile-menu-toggle" id="mobileMenuToggle" type="button" aria-label="Open menu" aria-controls="mobileMenuPanel" aria-expanded="false">☰</button>
+      <button class="mobile-menu-toggle" id="mobileMenuToggle" type="button" aria-label="Open menu" aria-controls="mobileMenuPanel" aria-expanded="false"><img src="assets/icons/menu.svg" alt="" aria-hidden="true"></button>
       <div class="brand">
         <div>
           <h1>Quran Reading Companion</h1>
@@ -24,25 +24,25 @@
 
     <div class="mobile-menu-backdrop hidden" id="mobileMenuBackdrop"></div>
     <nav class="mobile-menu-panel hidden" id="mobileMenuPanel" aria-label="Mobile navigation">
-      <button class="mobile-menu-close" id="mobileMenuClose" type="button" aria-label="Close menu">×</button>
-      <button class="nav-item active" data-view="home">⌂ <span>Home</span></button>
-      <button class="nav-item" data-view="current">📖 <span>Current Reading</span></button>
-      <button class="nav-item" data-view="readings">☷ <span>Browse Schedule</span></button>
-      <button class="nav-item" data-action="openPlans">▤ <span>Reading Plans</span></button>
-      <button class="nav-item" data-view="history">◷ <span>Completed Cycles</span></button>
-      <button class="nav-item" data-modal="aboutSchedule">ⓘ <span>About This Schedule</span></button>
-      <button class="nav-item" data-view="progress">◌ <span>Progress</span></button>
+      <button class="mobile-menu-close" id="mobileMenuClose" type="button" aria-label="Close menu"><img src="assets/icons/x.svg" alt="" aria-hidden="true"></button>
+      <button class="nav-item active" data-view="home"><img class="nav-icon" src="assets/icons/home.svg" alt="" aria-hidden="true"><span>Home</span></button>
+      <button class="nav-item" data-view="current"><img class="nav-icon" src="assets/icons/book-open.svg" alt="" aria-hidden="true"><span>Current Reading</span></button>
+      <button class="nav-item" data-view="readings"><img class="nav-icon" src="assets/icons/clipboard-list.svg" alt="" aria-hidden="true"><span>Current Plan</span></button>
+      <button class="nav-item" data-action="openPlans"><img class="nav-icon" src="assets/icons/library.svg" alt="" aria-hidden="true"><span>Reading Plans</span></button>
+      <button class="nav-item" data-view="progress"><img class="nav-icon" src="assets/icons/chart.svg" alt="" aria-hidden="true"><span>Progress</span></button>
+      <button class="nav-item" data-view="history"><img class="nav-icon" src="assets/icons/check-circle.svg" alt="" aria-hidden="true"><span>Completed Plans</span></button>
+      <button class="nav-item" data-modal="aboutSchedule"><img class="nav-icon" src="assets/icons/info.svg" alt="" aria-hidden="true"><span>About This App</span></button>
     </nav>
 
     <main class="layout">
       <aside class="sidebar">
-        <button class="nav-item active" data-view="home">⌂ <span>Home</span></button>
-        <button class="nav-item" data-view="current">📖 <span>Current Reading</span></button>
-        <button class="nav-item" data-view="readings">☷ <span>Browse Schedule</span></button>
-        <button class="nav-item" data-action="openPlans">▤ <span>Reading Plans</span></button>
-        <button class="nav-item" data-view="history">◷ <span>Completed Cycles</span></button>
-        <button class="nav-item" data-modal="aboutSchedule">ⓘ <span>About This Schedule</span></button>
-        <button class="nav-item" data-view="progress">◌ <span>Progress</span></button>
+        <button class="nav-item active" data-view="home"><img class="nav-icon" src="assets/icons/home.svg" alt="" aria-hidden="true"><span>Home</span></button>
+        <button class="nav-item" data-view="current"><img class="nav-icon" src="assets/icons/book-open.svg" alt="" aria-hidden="true"><span>Current Reading</span></button>
+        <button class="nav-item" data-view="readings"><img class="nav-icon" src="assets/icons/clipboard-list.svg" alt="" aria-hidden="true"><span>Current Plan</span></button>
+        <button class="nav-item" data-action="openPlans"><img class="nav-icon" src="assets/icons/library.svg" alt="" aria-hidden="true"><span>Reading Plans</span></button>
+        <button class="nav-item" data-view="progress"><img class="nav-icon" src="assets/icons/chart.svg" alt="" aria-hidden="true"><span>Progress</span></button>
+        <button class="nav-item" data-view="history"><img class="nav-icon" src="assets/icons/check-circle.svg" alt="" aria-hidden="true"><span>Completed Plans</span></button>
+        <button class="nav-item" data-modal="aboutSchedule"><img class="nav-icon" src="assets/icons/info.svg" alt="" aria-hidden="true"><span>About This App</span></button>
 
         <div class="quote-card">
           <div class="arabic-small">ذَٰلِكَ الْكِتَابُ لَا رَيْبَ ۛ فِيهِ</div>

@@ -755,8 +755,10 @@ function readingRowSmallHtml(reading){
 }
 function renderReadings(){
   const schedule = activeSchedule();
+  const eyebrow = document.querySelector('#readingsView .section-heading .eyebrow');
+  if(eyebrow) eyebrow.textContent = 'Current Plan';
   const heading = document.querySelector('#readingsView .section-heading h2');
-  if(heading) heading.textContent = schedule.id === 'juzAmma' ? 'All Surahs' : 'All Readings';
+  if(heading) heading.textContent = schedule.name;
   const rows=readings.filter(r=> state.filter==='completed'?isCompleted(r.id):state.filter==='remaining'?!isCompleted(r.id):true);
   $('allReadings').innerHTML=rows.map(r=>`<div class="reading-row ${isCompleted(r.id)?'completed':''}" data-id="${r.id}">
     <label class="reading-check-wrap" title="Mark this ${schedule.unitSingular} complete or incomplete">
