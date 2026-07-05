@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Qur'an Reading Cycle v0.8.8</title>
+  <title>Qur'an Reading Schedule v0.9.0</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Scheherazade+New:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -15,12 +15,12 @@
       <div class="brand">
         <div class="brand-icon" aria-hidden="true">📖</div>
         <div>
-          <h1>Qur'an Reading Cycle</h1>
-          <p>120 readings • steady progress, no dates</p>
+          <h1>Qur'an Reading Schedule</h1>
+          <p>Steady steps, lasting reward.</p>
         </div>
       </div>
       <nav class="top-actions" aria-label="Top navigation">
-        <button class="ghost-btn" data-view="readings">Reading Cycle</button>
+        <button class="ghost-btn" data-view="readings">Browse Schedule</button>
         <button class="ghost-btn" data-view="progress">Progress</button>
         <button class="ghost-btn" data-view="history">History</button>
       </nav>
@@ -30,7 +30,7 @@
       <aside class="sidebar">
         <button class="nav-item active" data-view="home">⌂ <span>Home</span></button>
         <button class="nav-item" data-view="current">📖 <span>Current Reading</span></button>
-        <button class="nav-item" data-view="readings">☷ <span>Reading Cycle</span></button>
+        <button class="nav-item" data-view="readings">☷ <span>Browse Schedule</span></button>
         <button class="nav-item" data-view="history">◷ <span>History</span></button>
         <button class="nav-item" data-modal="aboutSchedule">ⓘ <span>About This Schedule</span></button>
         <button class="nav-item" data-view="progress">◌ <span>Progress</span></button>
@@ -43,10 +43,22 @@
       </aside>
 
       <section class="content" id="homeView">
-        <div class="welcome">
-          <h2>As-salāmu ‘alaykum</h2>
+        <div class="welcome home-welcome">
+          <div>
+            <h2>As-salāmu ‘alaykum</h2>
+            <p class="subtle">May Allah make our Qur'an a spring of light in our hearts.</p>
+          </div>
           <div class="flourish">✤</div>
         </div>
+
+        <section class="plan-home-card" aria-label="Current reading plan">
+          <button class="current-plan-btn" id="currentPlanBtn" type="button" aria-haspopup="dialog" aria-controls="planModal">
+            <span class="plan-icon" aria-hidden="true">📖</span>
+            <span><small>Current Plan</small><strong>Complete Qur'an</strong><em>120 Readings</em></span>
+            <span class="plan-caret">⌄</span>
+          </button>
+          <p id="planReassurance" class="plan-reassurance">Each plan keeps its own progress, so you can switch anytime without losing your place.</p>
+        </section>
 
         <section class="hero-card">
           <div class="hero-icon">📖</div>
@@ -61,7 +73,7 @@
         </section>
 
         <section class="jump-card">
-          <p class="eyebrow">Or start from another reading</p>
+          <p class="eyebrow">Browse or start from another reading</p>
           <div class="search-line">
             <label class="search-box" for="jumpSearch">⌕
               <input id="jumpSearch" type="search" placeholder="Search by reading number, surah name, theme, or range..." autocomplete="off" />
@@ -123,7 +135,7 @@
       </section>
 
       <section class="content hidden" id="readingsView">
-        <div class="section-heading"><p class="eyebrow">Reading Cycle</p><h2>All Readings</h2></div>
+        <div class="section-heading"><p class="eyebrow">Browse Schedule</p><h2>All Readings</h2></div>
         <div class="filter-row">
           <button class="pill active" data-filter="all">All</button>
           <button class="pill" data-filter="completed">Completed</button>
@@ -185,6 +197,34 @@
         <div class="tip-card"><strong>Tip</strong><p>No dates. No feeling behind. Just continue with the next reading.</p></div>
       </aside>
     </main>
+  </div>
+
+
+
+  <div class="modal-backdrop hidden" id="browseScheduleModal" role="dialog" aria-modal="true" aria-labelledby="browseScheduleTitle">
+    <div class="modal-card browse-modal-card">
+      <button class="modal-close" id="closeBrowseScheduleModal" aria-label="Close schedule browser">×</button>
+      <p class="eyebrow" id="browseScheduleEyebrow">Browse Schedule</p>
+      <h2 id="browseScheduleTitle">Complete Qur'an</h2>
+      <p id="browseScheduleNote" class="subtle">Choose any reading to make it your current place. Completed progress stays saved.</p>
+      <label class="search-box browse-modal-search" for="browseScheduleSearch">⌕
+        <input id="browseScheduleSearch" type="search" placeholder="Search this plan..." autocomplete="off" />
+      </label>
+      <div id="browseScheduleList" class="browse-schedule-list"></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop hidden" id="planModal" role="dialog" aria-modal="true" aria-labelledby="planModalTitle">
+    <div class="modal-card plan-modal-card">
+      <button class="modal-close" id="closePlanModal" aria-label="Close reading plan chooser">×</button>
+      <h2 id="planModalTitle">Switch Reading Plan</h2>
+      <p class="plan-modal-note"><span aria-hidden="true">✓</span> Your progress is saved separately for each reading plan. Switch anytime without losing your place.</p>
+      <div id="planOptions" class="plan-options" aria-label="Reading plan options"></div>
+      <div class="plan-modal-footer">
+        <p>Each plan keeps its own progress, so you can focus on your journey in the way that works best for you.</p>
+        <button class="ghost-outline" id="cancelPlanModal" type="button">Cancel</button>
+      </div>
+    </div>
   </div>
 
   <div class="modal-backdrop hidden" id="aboutModal" role="dialog" aria-modal="true" aria-labelledby="aboutModalTitle">

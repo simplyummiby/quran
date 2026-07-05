@@ -1,4 +1,4 @@
-const readings = [
+const completeQuranReadings = [
   r(1,[p('Al-Fatihah',1,7),p('Al-Baqarah',1,39)],'The Beginning of Guidance','Opening, guidance, the three groups of people, and the story of Adam.',1,1,9),
   r(2,[p('Al-Baqarah',40,123)],'Lessons from Bani Israel','Reminders, covenants, tests, and lessons from the Children of Israel.',2,40,12),
   r(3,[p('Al-Baqarah',124,167)],'The Legacy of Ibrahim','Ibrahim, the Ka‘bah, the qiblah, and the identity of the Muslim ummah.',2,124,8),
@@ -121,6 +121,80 @@ const readings = [
   r(120,[p('Al-Falaq',1,5),p('An-Nas',1,6)],'Seeking Refuge','Seeking protection with Allah from external and internal harms.',113,1,1)
 ];
 
+const juzAmmaSurahs = [
+  ['An-Naba',78,1,40,'The Great News','Resurrection, creation, and the final gathering.',2],
+  ['An-Nazi‘at',79,1,46,'The Pulling Angels','The final return, Musa and Pharaoh, and the Hour.',2],
+  ['‘Abasa',80,1,42,'The Reminder','The value of sincere seeking and the reminder for whoever wills.',2],
+  ['At-Takwir',81,1,29,'The Overthrowing','Signs of the Last Day and the truth of revelation.',1],
+  ['Al-Infitar',82,1,19,'The Splitting Open','The records of deeds and accountability before the Most Generous.',1],
+  ['Al-Mutaffifin',83,1,36,'Justice in Measures','Honesty, records, and the reward of the righteous.',2],
+  ['Al-Inshiqaq',84,1,25,'The Splitting Asunder','The return to Allah and receiving the record.',1],
+  ['Al-Buruj',85,1,22,'The Great Stars','Steadfastness under trial and the preserved Qur’an.',1],
+  ['At-Tariq',86,1,17,'The Night-Comer','Human origin and the decisive word of the Qur’an.',1],
+  ['Al-A‘la',87,1,19,'The Most High','Glorifying Allah and the successful one who purifies himself.',1],
+  ['Al-Ghashiyah',88,1,26,'The Overwhelming','Faces of the Hereafter and reflection on creation.',1],
+  ['Al-Fajr',89,1,30,'The Dawn','Past nations and the reassured soul.',1],
+  ['Al-Balad',90,1,20,'The City','The steep path, mercy, and true success.',1],
+  ['Ash-Shams',91,1,15,'The Sun','Purification of the soul and the fate of Thamud.',1],
+  ['Al-Layl',92,1,21,'The Night','Giving, withholding, and the path to ease.',1],
+  ['Ad-Duha',93,1,11,'The Morning Brightness','Allah’s care, comfort, and gratitude.',1],
+  ['Ash-Sharh',94,1,8,'Relief','Ease after difficulty and turning to Allah.',1],
+  ['At-Tin',95,1,8,'The Fig','Human nobility and accountability.',1],
+  ['Al-‘Alaq',96,1,19,'The Clinging Clot','The first revelation and warning against arrogance.',1],
+  ['Al-Qadr',97,1,5,'The Night of Decree','The blessed night of revelation.',1],
+  ['Al-Bayyinah',98,1,8,'The Clear Proof','Clear evidence and sincere worship.',1],
+  ['Az-Zalzalah',99,1,8,'The Earthquake','The earth’s report and every deed brought forth.',1],
+  ['Al-‘Adiyat',100,1,11,'The Chargers','Human ingratitude and what hearts conceal.',1],
+  ['Al-Qari‘ah',101,1,11,'The Striking Hour','The scales of deeds and final outcomes.',1],
+  ['At-Takathur',102,1,8,'Rivalry in Increase','The distraction of worldly increase.',1],
+  ['Al-‘Asr',103,1,3,'Time','The path out of loss.',1],
+  ['Al-Humazah',104,1,9,'The Slanderer','Warning against mockery and hoarding wealth.',1],
+  ['Al-Fil',105,1,5,'The Elephant','Allah’s protection of the Sacred House.',1],
+  ['Quraysh',106,1,4,'Quraysh','Security, provision, and worship of the Lord of the House.',1],
+  ['Al-Ma‘un',107,1,7,'Small Kindnesses','Prayer, sincerity, and mercy in small deeds.',1],
+  ['Al-Kawthar',108,1,3,'Abundance','Prayer, sacrifice, and Allah’s gift.',1],
+  ['Al-Kafirun',109,1,6,'The Disbelievers','Clear separation from false worship.',1],
+  ['An-Nasr',110,1,3,'Victory','Praise and seeking forgiveness at victory.',1],
+  ['Al-Masad',111,1,5,'The Palm Fiber','The end of opposition to the truth.',1],
+  ['Al-Ikhlas',112,1,4,'Pure Tawhid','The perfection of Allah’s oneness.',1],
+  ['Al-Falaq',113,1,5,'Daybreak','Seeking refuge from external harms.',1],
+  ['An-Nas',114,1,6,'Mankind','Seeking refuge from internal whispers.',1]
+].map((item, index) => r(index + 1, [p(item[0], item[2], item[3])], item[4], item[5], item[1], item[2], item[6]));
+
+const SCHEDULES = {
+  complete: {
+    id: 'complete',
+    name: "Complete Qur'an",
+    shortName: "Complete Qur'an",
+    countLabel: '120 Readings',
+    unitSingular: 'reading',
+    unitPlural: 'readings',
+    currentLabel: 'Current Reading',
+    itemLabel: 'Reading',
+    browseTitle: 'Browse Schedule',
+    items: completeQuranReadings,
+    accent: 'green',
+    icon: '📖',
+    description: "Read the entire Qur’an at your own pace with thoughtfully divided readings."
+  },
+  juzAmma: {
+    id: 'juzAmma',
+    name: 'Juz Amma',
+    shortName: 'Juz Amma',
+    countLabel: '37 Surahs',
+    unitSingular: 'surah',
+    unitPlural: 'surahs',
+    currentLabel: 'Current Surah',
+    itemLabel: 'Surah',
+    browseTitle: 'Browse Juz Amma',
+    items: juzAmmaSurahs,
+    accent: 'purple',
+    icon: '📘',
+    description: 'Focus on the 30th Juz of the Qur’an.'
+  }
+};
+let activePlanId = localStorage.getItem('qrc_active_plan_v09') || 'complete';
+let readings = SCHEDULES[activePlanId]?.items || completeQuranReadings;
 
 function p(name, start, end) { return { name, start, end }; }
 function r(id, passages, theme, description, quranSurah, quranAyah, pages) {
@@ -160,7 +234,57 @@ const surahCache = new Map();
 
 const $ = (id) => document.getElementById(id);
 const views = ['home','current','readings','history','progress'];
-function save(){ localStorage.setItem(STORAGE.current,String(state.current)); localStorage.setItem(STORAGE.completed,JSON.stringify([...state.completed])); localStorage.setItem(STORAGE.cycle,String(state.cycle)); localStorage.setItem(STORAGE.history,JSON.stringify(state.history)); localStorage.setItem(STORAGE.cycleStarted,state.cycleStarted); localStorage.setItem('qrc_reader_scroll_v08', JSON.stringify(state.readerScroll || {})); }
+const PLAN_PROGRESS_KEY = 'qrc_plan_progress_v09';
+
+function activeSchedule(){ return SCHEDULES[activePlanId] || SCHEDULES.complete; }
+function allSchedules(){ return Object.values(SCHEDULES); }
+function defaultPlanProgress(planId){ return { current: 1, completed: [], cycle: 1, history: [], cycleStarted: new Date().toISOString() }; }
+function safeParsePlanProgress(){
+  try { return JSON.parse(localStorage.getItem(PLAN_PROGRESS_KEY) || '{}') || {}; }
+  catch { return {}; }
+}
+let planProgress = safeParsePlanProgress();
+if(!planProgress.complete){
+  planProgress.complete = {
+    current: state.current,
+    completed: [...state.completed],
+    cycle: state.cycle,
+    history: state.history,
+    cycleStarted: state.cycleStarted
+  };
+}
+function storeActiveProgress(){
+  planProgress[activePlanId] = {
+    current: state.current,
+    completed: [...state.completed],
+    cycle: state.cycle,
+    history: state.history,
+    cycleStarted: state.cycleStarted
+  };
+}
+function loadPlanIntoState(planId){
+  activePlanId = SCHEDULES[planId] ? planId : 'complete';
+  readings = activeSchedule().items;
+  const stored = planProgress[activePlanId] || defaultPlanProgress(activePlanId);
+  state.current = Number(stored.current || 1);
+  state.completed = new Set(Array.isArray(stored.completed) ? stored.completed.map(Number) : []);
+  state.cycle = Number(stored.cycle || 1);
+  state.history = Array.isArray(stored.history) ? stored.history : [];
+  state.cycleStarted = stored.cycleStarted || new Date().toISOString();
+}
+function save(){
+  storeActiveProgress();
+  localStorage.setItem('qrc_active_plan_v09', activePlanId);
+  localStorage.setItem(PLAN_PROGRESS_KEY, JSON.stringify(planProgress));
+  if(activePlanId === 'complete'){
+    localStorage.setItem(STORAGE.current,String(state.current));
+    localStorage.setItem(STORAGE.completed,JSON.stringify([...state.completed]));
+    localStorage.setItem(STORAGE.cycle,String(state.cycle));
+    localStorage.setItem(STORAGE.history,JSON.stringify(state.history));
+    localStorage.setItem(STORAGE.cycleStarted,state.cycleStarted);
+  }
+  localStorage.setItem('qrc_reader_scroll_v08', JSON.stringify(state.readerScroll || {}));
+}
 function normalizeState(){
   const total = readings.length;
   state.current = Math.min(total, Math.max(1, Number(state.current) || 1));
@@ -173,10 +297,35 @@ function normalizeState(){
   }
   if (!state.cycleStarted) state.cycleStarted = new Date().toISOString();
 }
+loadPlanIntoState(activePlanId);
 normalizeState();
 save();
 function currentReading(){ return readings[state.current - 1] || readings[0]; }
 function isCompleted(id){ return state.completed.has(id); }
+function planProgressSummary(planId){
+  const schedule = SCHEDULES[planId] || SCHEDULES.complete;
+  const stored = planId === activePlanId ? { current: state.current, completed: [...state.completed] } : (planProgress[planId] || defaultPlanProgress(planId));
+  const completed = Array.isArray(stored.completed) ? stored.completed.length : 0;
+  const current = Math.min(schedule.items.length, Math.max(1, Number(stored.current || 1)));
+  const currentItem = schedule.items[current - 1] || schedule.items[0];
+  const status = completed ? `${completed} of ${schedule.items.length} completed` : 'Not started';
+  const last = completed || current > 1 ? `${schedule.itemLabel} ${current}: ${passageTitleNumbered(currentItem)}` : 'Not started';
+  return { schedule, completed, total: schedule.items.length, current, currentItem, status, last };
+}
+function switchPlan(planId){
+  if(!SCHEDULES[planId] || planId === activePlanId) { closePlanModal(); return; }
+  storeActiveProgress();
+  loadPlanIntoState(planId);
+  state.selectedJump = 1;
+  state.query = '';
+  state.filter = 'all';
+  state.completionAck = null;
+  normalizeState();
+  save();
+  closePlanModal();
+  renderAll();
+  showView('home');
+}
 function formatSurahNumber(number){
   return `(${String(number).padStart(3,'0')})`;
 }
@@ -217,51 +366,86 @@ function completedCycles(){
   return state.history.filter(item=>item.type==='completed-cycle').sort((a,b)=>new Date(b.completedAt)-new Date(a.completedAt));
 }
 
+function itemHeading(reading){
+  const schedule = activeSchedule();
+  return schedule.id === 'complete' ? `Reading ${reading.id} of ${readings.length}` : `${formatSurahNumber(reading.quranSurah)} ${reading.passages[0].name}`;
+}
+function itemSmallLabel(reading){
+  const schedule = activeSchedule();
+  return schedule.id === 'complete' ? `Reading ${reading.id}` : `Surah ${reading.quranSurah}`;
+}
 function renderCurrent(){
   if (state.completionAck) {
     renderCompletionAck();
     return;
   }
+  const schedule = activeSchedule();
   const reading=currentReading();
   $('readingCard').classList.remove('hidden','is-exiting');
   $('aboutReadingPanel').classList.remove('hidden');
   $('completionCard').classList.add('hidden');
-  $('readingTitle').textContent=`Reading ${reading.id} of ${readings.length}`;
+  $('readingTitle').textContent = schedule.id === 'complete' ? `Reading ${reading.id} of ${readings.length}` : `${schedule.name} • ${formatSurahNumber(reading.quranSurah)} ${reading.passages[0].name}`;
   $('passageList').innerHTML=reading.passages.map((item, idx)=>`<div class="passage"><h3>${item.name.startsWith('Review:') ? item.name : `${formatSurahNumber(passageSurahNumber(reading, idx))} ${item.name}`}</h3>${item.name.startsWith('Review:')?'':`<p>${item.start} – ${item.end}</p>`}</div>`).join('');
   $('readingTheme').textContent=reading.theme; $('readingDescription').innerHTML=addSalawat(reading.description); $('currentMetrics').innerHTML=metricHtml(reading); $('quranLink').href=quranUrl(reading);
   $('completeBtn').innerHTML=`<span id="completeBox">${isCompleted(reading.id)?'☑':'☐'}</span> ${isCompleted(reading.id)?'Completed':'Mark Complete'}`;
 }
 function renderCompletionAck(){
+  const schedule = activeSchedule();
   const done = readings[(state.completionAck.completedId || 1) - 1] || readings[0];
   const next = readings[(state.current || 1) - 1] || readings[readings.length - 1];
   $('readingCard').classList.add('hidden');
   $('aboutReadingPanel').classList.add('hidden');
   $('completionCard').classList.remove('hidden');
-  $('readingTitle').textContent = `Reading ${next.id} of ${readings.length}`;
-  $('completedSummary').innerHTML = `Reading <strong>${done.id}</strong>, <strong>${passageTitleNumbered(done)}</strong>, has been marked complete.`;
-  $('nextPreview').innerHTML = `<h3>Reading ${next.id}</h3><p class="subtle">${passageTitleNumbered(next)}</p><p class="theme">${next.theme}</p><div class="metrics centered-metrics">${metricHtml(next)}</div>`;
-  $('beginNextBtn').textContent = done.id === readings.length ? 'Start New Cycle' : (next.id === done.id ? 'Return to Reading' : `Begin Reading ${next.id}`);
+  $('readingTitle').textContent = schedule.id === 'complete' ? `Reading ${next.id} of ${readings.length}` : `${schedule.name} • ${formatSurahNumber(next.quranSurah)} ${next.passages[0].name}`;
+  $('completedSummary').innerHTML = `${schedule.itemLabel} <strong>${schedule.id === 'complete' ? done.id : done.quranSurah}</strong>, <strong>${passageTitleNumbered(done)}</strong>, has been marked complete.`;
+  $('nextPreview').innerHTML = `<h3>${schedule.id === 'complete' ? `Reading ${next.id}` : `${formatSurahNumber(next.quranSurah)} ${next.passages[0].name}`}</h3><p class="subtle">${passageTitleNumbered(next)}</p><p class="theme">${next.theme}</p><div class="metrics centered-metrics">${metricHtml(next)}</div>`;
+  $('beginNextBtn').textContent = done.id === readings.length ? `Start ${schedule.name} Again` : (next.id === done.id ? 'Return to Reading' : `Begin ${schedule.itemLabel} ${schedule.id === 'complete' ? next.id : next.quranSurah}`);
+}
+function renderPlanSelector(){
+  const schedule = activeSchedule();
+  const btn = $('currentPlanBtn');
+  if(!btn) return;
+  btn.className = `current-plan-btn plan-${schedule.accent}`;
+  btn.innerHTML = `<span class="plan-icon" aria-hidden="true">${schedule.icon}</span><span><small>Current Plan</small><strong>${schedule.name}</strong><em>${schedule.countLabel}</em></span><span class="plan-caret">⌄</span>`;
+  const note = $('planReassurance');
+  if(note) note.textContent = 'Each plan keeps its own progress, so you can switch anytime without losing your place.';
 }
 function renderHome(){
+  const schedule = activeSchedule();
   const reading=currentReading(); const pct=Math.round((state.completed.size/readings.length)*100);
-  $('homeReadingTitle').textContent=`Reading ${reading.id} of ${readings.length}`; $('homePassageTitle').textContent=passageTitleNumbered(reading); $('homeMetrics').innerHTML=metricHtml(reading); $('heroBar').style.width=`${pct}%`;
+  renderPlanSelector();
+  $('homeReadingTitle').textContent = schedule.id === 'complete' ? `Reading ${reading.id} of ${readings.length}` : `${formatSurahNumber(reading.quranSurah)} ${reading.passages[0].name}`;
+  $('homePassageTitle').textContent=passageTitleNumbered(reading); $('homeMetrics').innerHTML=metricHtml(reading); $('heroBar').style.width=`${pct}%`;
+  const label = document.querySelector('.jump-card .eyebrow');
+  if(label) label.textContent = schedule.id === 'complete' ? 'Browse or start from another reading' : 'Browse or start from another surah';
+  const input = $('jumpSearch');
+  if(input) input.placeholder = schedule.id === 'complete' ? 'Search by reading number, surah name, theme, or range...' : 'Search by surah number, surah name, or theme...';
   renderJump();
 }
 function updateProgress(){
+  const schedule = activeSchedule();
   const done=state.completed.size,total=readings.length,pct=Math.round((done/total)*100),degrees=pct*3.6;
-  ['sidePercent','bigPercent'].forEach(id=>$(id).textContent=`${pct}%`); $('progressText').textContent=`${done} of ${total} readings completed`; $('bigProgressText').textContent=`${done} of ${total} readings completed`; ['sideRing','bigRing'].forEach(id=>$(id).style.background=`conic-gradient(var(--green) ${degrees}deg, #e4e3df ${degrees}deg)`);
-  $('completedStat').textContent=done; $('remainingStat').textContent=total-done; $('currentStat').textContent=state.current; $('cycleStat').textContent=state.cycle; $('sideCompleted').textContent=done; $('sideRemaining').textContent=total-done; $('cycleTitle').textContent=`Cycle ${state.cycle}`; $('cycleDetails').textContent=`Reading ${state.current} of ${total}`;
-  const next=readings[Math.min(total-1,state.current)]; $('nextBadge').textContent=next.id; $('upNextTitle').textContent=passageTitleNumbered(next); $('upNextTheme').textContent=next.theme;
+  ['sidePercent','bigPercent'].forEach(id=>$(id).textContent=`${pct}%`); $('progressText').textContent=`${done} of ${total} ${schedule.unitPlural} completed`; $('bigProgressText').textContent=`${done} of ${total} ${schedule.unitPlural} completed`; ['sideRing','bigRing'].forEach(id=>$(id).style.background=`conic-gradient(var(--green) ${degrees}deg, #e4e3df ${degrees}deg)`);
+  $('completedStat').textContent=done; $('remainingStat').textContent=total-done; $('currentStat').textContent=schedule.id === 'complete' ? state.current : currentReading().quranSurah; $('cycleStat').textContent=state.cycle; $('sideCompleted').textContent=done; $('sideRemaining').textContent=total-done; $('cycleTitle').textContent=schedule.name; $('cycleDetails').textContent=`${schedule.itemLabel} ${schedule.id === 'complete' ? state.current : currentReading().quranSurah} of ${total}`;
+  const next=readings[Math.min(total-1,state.current)]; $('nextBadge').textContent=schedule.id === 'complete' ? next.id : next.quranSurah; $('upNextTitle').textContent=passageTitleNumbered(next); $('upNextTheme').textContent=next.theme;
+}
+function readingNumberBadge(reading){
+  const schedule = activeSchedule();
+  const n = schedule.id === 'complete' ? reading.id : reading.quranSurah;
+  return `<span class="reading-num"><small>${schedule.itemLabel}</small><strong>${n}</strong></span>`;
 }
 function renderReadings(){
+  const schedule = activeSchedule();
+  const heading = document.querySelector('#readingsView .section-heading h2');
+  if(heading) heading.textContent = schedule.id === 'complete' ? 'All Readings' : 'All Surahs';
   const rows=readings.filter(r=> state.filter==='completed'?isCompleted(r.id):state.filter==='remaining'?!isCompleted(r.id):true);
   $('allReadings').innerHTML=rows.map(r=>`<div class="reading-row ${isCompleted(r.id)?'completed':''}" data-id="${r.id}">
-    <label class="reading-check-wrap" title="Mark this reading complete or incomplete">
+    <label class="reading-check-wrap" title="Mark this ${schedule.unitSingular} complete or incomplete">
       <input class="reading-check-input" type="checkbox" data-id="${r.id}" ${isCompleted(r.id)?'checked':''} />
       <span class="custom-check">${isCompleted(r.id)?'✓':'○'}</span>
     </label>
     <button class="reading-row-main" data-id="${r.id}">
-      <span class="reading-num"><small>Reading</small><strong>${r.id}</strong></span>
+      ${readingNumberBadge(r)}
       <span><strong>${passageTitleNumbered(r)}</strong><small>${r.theme} • ${r.minutes} • ${r.ayat} āyāt</small></span>
     </button>
   </div>`).join('');
@@ -269,47 +453,51 @@ function renderReadings(){
   document.querySelectorAll('.reading-check-input').forEach(box=>box.addEventListener('change',()=>toggleReadingComplete(Number(box.dataset.id), box.checked)));
 }
 function toggleReadingComplete(id, checked){
-  if(checked){ state.completed.add(id); state.history.push({type:'manual-check',cycle:state.cycle,reading:id,date:new Date().toISOString()}); }
-  else { state.completed.delete(id); state.history.push({type:'manual-uncheck',cycle:state.cycle,reading:id,date:new Date().toISOString()}); }
+  const schedule = activeSchedule();
+  if(checked){ state.completed.add(id); state.history.push({type:'manual-check',cycle:state.cycle,plan:activePlanId,reading:id,date:new Date().toISOString()}); }
+  else { state.completed.delete(id); state.history.push({type:'manual-uncheck',cycle:state.cycle,plan:activePlanId,reading:id,date:new Date().toISOString()}); }
   state.completionAck=null;
   save(); renderAll();
 }
 function matchReading(reading,q){
   if(!q) return true; const s=q.toLowerCase().trim();
-  if(/^\d+$/.test(s)) return reading.id===Number(s);
+  if(/^\d+$/.test(s)) return activeSchedule().id === 'complete' ? reading.id===Number(s) : reading.quranSurah===Number(s);
   const plus=s.match(/^(\d+)\+$/); if(plus) return reading.id>=Number(plus[1]);
   const range=s.match(/^(\d+)\s*-\s*(\d+)$/); if(range) return reading.id>=Number(range[1]) && reading.id<=Number(range[2]);
-  return `${reading.id} ${passageTitle(reading)} ${passageTitleNumbered(reading)} ${reading.theme} ${reading.description}`.toLowerCase().includes(s);
+  return `${reading.id} ${reading.quranSurah} ${passageTitle(reading)} ${passageTitleNumbered(reading)} ${reading.theme} ${reading.description}`.toLowerCase().includes(s);
 }
 function renderJump(){
+  const schedule = activeSchedule();
   const rows=readings.filter(r=>matchReading(r,state.query));
   if(!rows.find(r=>r.id===state.selectedJump)) state.selectedJump=(rows[0]||readings[0]).id;
-  const resultLabel = state.query.trim() ? `${rows.length} matching reading${rows.length===1?'':'s'}` : `All ${readings.length} readings`;
+  const resultLabel = state.query.trim() ? `${rows.length} matching ${rows.length===1?schedule.unitSingular:schedule.unitPlural}` : `All ${readings.length} ${schedule.unitPlural}`;
   $('jumpResults').innerHTML = rows.length
-    ? `<p class="results-label">${resultLabel}</p>` + rows.map(r=>`<button class="jump-row ${r.id===state.selectedJump?'active':''}" data-id="${r.id}"><span class="num"><small>Reading</small><strong>${r.id}</strong></span><span><strong>${passageTitleNumbered(r)}</strong><small>${r.theme}</small></span><span>${r.minutes}</span></button>`).join('')
-    : `<p class="subtle">No readings matched your search.</p>`;
+    ? `<p class="results-label">${resultLabel}</p>` + rows.map(r=>`<button class="jump-row ${r.id===state.selectedJump?'active':''}" data-id="${r.id}"><span class="num"><small>${schedule.itemLabel}</small><strong>${schedule.id === 'complete' ? r.id : r.quranSurah}</strong></span><span><strong>${passageTitleNumbered(r)}</strong><small>${r.theme}</small></span><span>${r.minutes}</span></button>`).join('')
+    : `<p class="subtle">No ${schedule.unitPlural} matched your search.</p>`;
   document.querySelectorAll('.jump-row').forEach(btn=>btn.addEventListener('click',()=>{state.selectedJump=Number(btn.dataset.id);renderJump();}));
   renderJumpPreview();
 }
 function renderJumpPreview(){
+  const schedule = activeSchedule();
   const r=readings[state.selectedJump-1] || readings[0];
-  $('jumpPreview').innerHTML=`<p class="eyebrow">Reading ${r.id}</p><h3>${passageTitleNumbered(r)}</h3><p class="subtle">${r.theme}</p><div class="metrics">${metricHtml(r)}</div><button class="primary-btn" id="setStartBtn">Set as Current Reading</button><button class="soft-btn preview-read-btn" id="previewReadBtn">Read in App</button><a class="soft-link-btn" href="${quranUrl(r)}" target="_blank" rel="noopener">Open casually on Quran.com</a>`;
+  $('jumpPreview').innerHTML=`<p class="eyebrow">${schedule.itemLabel} ${schedule.id === 'complete' ? r.id : r.quranSurah}</p><h3>${passageTitleNumbered(r)}</h3><p class="subtle">${r.theme}</p><div class="metrics">${metricHtml(r)}</div><button class="primary-btn" id="setStartBtn">Set as Current ${schedule.itemLabel}</button><button class="soft-btn preview-read-btn" id="previewReadBtn">Read in App</button><a class="soft-link-btn" href="${quranUrl(r)}" target="_blank" rel="noopener">Open casually on Quran.com</a>`;
   $('setStartBtn').addEventListener('click',()=>setStartingReading(r.id));
   $('previewReadBtn').addEventListener('click',()=>openReader(r.id,{casual:true}));
 }
 function setStartingReading(id){
   state.current=id;
   state.completionAck=null;
-  state.history.push({type:'set-current-reading',cycle:state.cycle,reading:id,date:new Date().toISOString()});
+  state.history.push({type:'set-current-reading',cycle:state.cycle,plan:activePlanId,reading:id,date:new Date().toISOString()});
   save(); renderAll(); showView('current');
 }
 function startNewCycle({recordCompleted=false}={}){
+  const schedule = activeSchedule();
   const allDone = state.completed.size >= readings.length;
   if(recordCompleted || allDone){
     const completedAt = new Date().toISOString();
     const alreadyRecorded = state.history.some(item=>item.type==='completed-cycle' && item.cycle===state.cycle);
     if(!alreadyRecorded){
-      state.history.push({type:'completed-cycle',cycle:state.cycle,startedAt:state.cycleStarted,completedAt,duration:durationDays(state.cycleStarted,completedAt)});
+      state.history.push({type:'completed-cycle',cycle:state.cycle,plan:activePlanId,startedAt:state.cycleStarted,completedAt,duration:durationDays(state.cycleStarted,completedAt)});
     }
     state.cycle += 1;
     state.current=1;
@@ -320,31 +508,32 @@ function startNewCycle({recordCompleted=false}={}){
     return;
   }
 
-  if(!confirm('Restart this current cycle from Reading 1? This clears only this app’s completion checks and does not create a completed cycle in History.')) return;
+  if(!confirm(`Restart ${schedule.name} from the beginning? This clears only this plan’s completion checks.`)) return;
   state.current=1;
   state.completed.clear();
   state.completionAck=null;
   state.cycleStarted=new Date().toISOString();
-  state.history.push({type:'restart-current-cycle',cycle:state.cycle,date:new Date().toISOString()});
+  state.history.push({type:'restart-current-cycle',cycle:state.cycle,plan:activePlanId,date:new Date().toISOString()});
   save(); renderAll(); showView('home');
 }
 function showView(name){ if(name !== 'current') state.completionAck=null; views.forEach(v=>$(`${v}View`).classList.toggle('hidden',v!==name)); document.querySelectorAll('[data-view]').forEach(btn=>btn.classList.toggle('active',btn.dataset.view===name)); renderCurrent(); }
 function renderHistory(){
+  const schedule = activeSchedule();
   const current=currentReading();
   const completedCount=state.completed.size;
   $('historyCurrentCycle').innerHTML = `
     <div class="history-current-main">
-      <strong>Cycle ${state.cycle}</strong>
+      <strong>${schedule.name}</strong>
       <span>Started ${formatDate(state.cycleStarted)}</span>
     </div>
     <dl class="history-details">
-      <div><dt>Current Reading</dt><dd>Reading ${state.current} of ${readings.length}</dd></div>
+      <div><dt>Current ${schedule.itemLabel}</dt><dd>${schedule.itemLabel} ${schedule.id === 'complete' ? state.current : current.quranSurah} of ${readings.length}</dd></div>
       <div><dt>Current Passage</dt><dd>${passageTitleNumbered(current)}</dd></div>
-      <div><dt>Read in This Cycle</dt><dd>${completedCount} reading${completedCount===1?'':'s'}</dd></div>
+      <div><dt>Read in This Plan</dt><dd>${completedCount} ${completedCount===1?schedule.unitSingular:schedule.unitPlural}</dd></div>
     </dl>
     <div class="history-actions centered-actions">
       <button class="primary-btn" data-history-action="resume">Continue Reading</button>
-      <button class="ghost-outline" data-history-action="choose">Choose Starting Reading</button>
+      <button class="ghost-outline" data-history-action="choose">Choose Starting ${schedule.itemLabel}</button>
     </div>`;
 
   const cycles=completedCycles();
@@ -353,11 +542,11 @@ function renderHistory(){
     $('completedCyclesHistory').innerHTML = `
       <div class="empty-history">
         <div class="empty-icon">📖</div>
-        <h3>No completed reading cycles yet.</h3>
-        <p>Your completed reading cycles will appear here after you finish your first cycle.</p>
+        <h3>No completed cycles yet.</h3>
+        <p>Your completed cycles for this plan will appear here after you finish your first cycle.</p>
         <div class="history-actions centered-actions">
           <button class="primary-btn" data-history-action="resume">Continue Reading</button>
-          <button class="ghost-outline" data-history-action="choose">Choose Starting Reading</button>
+          <button class="ghost-outline" data-history-action="choose">Choose Starting ${schedule.itemLabel}</button>
         </div>
       </div>`;
   } else {
@@ -469,11 +658,14 @@ function saveReaderPreference(key,value){
   haptic(8);
 }
 function readerReading(){ return readings[(state.readerReadingId || state.current) - 1] || currentReading(); }
+function readerScrollKey(reading){ return `${activePlanId}:${reading.id}`; }
 function renderReaderShell(){
+  const schedule = activeSchedule();
   const reading=readerReading();
-  $('readerModalTitle').textContent=`Reading ${reading.id} of ${readings.length}`;
+  const label = schedule.id === 'complete' ? `Reading ${reading.id} of ${readings.length}` : `${formatSurahNumber(reading.quranSurah)} ${reading.passages[0].name}`;
+  $('readerModalTitle').textContent=label;
   $('readerSubtitle').textContent=`${passageTitleNumbered(reading)} • ${reading.minutes} • ${reading.ayat} āyāt`; 
-  $('readerPositionPill').textContent=`Reading ${reading.id} of ${readings.length}`;
+  $('readerPositionPill').textContent=schedule.id === 'complete' ? `Reading ${reading.id} of ${readings.length}` : `${schedule.name} • Surah ${reading.quranSurah}`;
   $('readerQuranLink').href=quranUrl(reading);
   const prevReading = readings[reading.id - 2];
   const nextReading = readings[reading.id];
@@ -519,7 +711,7 @@ async function openReader(readingId=state.current,{casual=false}={}){
   try{
     const groups=await loadReadingText(reading);
     renderReaderGroups(groups);
-    const savedTop = Number((state.readerScroll || {})[reading.id] || 0);
+    const savedTop = Number((state.readerScroll || {})[readerScrollKey(reading)] || 0);
     requestAnimationFrame(()=>{
       if(savedTop > 40){
         $('readerBody').scrollTop = 0;
@@ -537,7 +729,7 @@ async function openReader(readingId=state.current,{casual=false}={}){
 }
 function saveReaderScroll(){
   const reading=readerReading();
-  if(reading && state.readerScroll) state.readerScroll[reading.id] = $('readerBody').scrollTop || 0;
+  if(reading && state.readerScroll) state.readerScroll[readerScrollKey(reading)] = $('readerBody').scrollTop || 0;
   save();
 }
 function getReaderPositionAt(scrollTop){
@@ -582,11 +774,11 @@ function showResumePrompt(reading, savedTop){
   const card=$('resumeReadingCard');
   if(!card) return;
   const positionLabel = formatReaderPosition(getReaderPositionAt(savedTop));
-  $('resumeReadingText').textContent=`Your saved place is ${positionLabel} in Reading ${reading.id}.`;
+  $('resumeReadingText').textContent=`Your saved place is ${positionLabel} in ${activeSchedule().itemLabel} ${activeSchedule().id === 'complete' ? reading.id : reading.quranSurah}.`;
   card.classList.remove('hidden');
 }
 function clearReaderProgressFor(readingId){
-  if(state.readerScroll) delete state.readerScroll[readingId];
+  if(state.readerScroll) delete state.readerScroll[`${activePlanId}:${readingId}`];
   save();
 }
 async function navigateReader(delta){
@@ -615,7 +807,7 @@ function markCurrentComplete(){
     state.completionAck=null;
   } else {
     state.completed.add(id);
-    state.history.push({type:'marked-complete',cycle:state.cycle,reading:id,date:new Date().toISOString()});
+    state.history.push({type:'marked-complete',cycle:state.cycle,plan:activePlanId,reading:id,date:new Date().toISOString()});
     state.current = id < readings.length ? id + 1 : id;
     state.completionAck={completedId:id};
   }
@@ -630,13 +822,60 @@ function undoLastCompletion(){
   state.completed.delete(ack.completedId);
   state.current=ack.completedId;
   state.completionAck=null;
-  state.history.push({type:'undo-complete',cycle:state.cycle,reading:ack.completedId,date:new Date().toISOString()});
+  state.history.push({type:'undo-complete',cycle:state.cycle,plan:activePlanId,reading:ack.completedId,date:new Date().toISOString()});
   haptic(15);
   save(); renderAll(); showView('current');
 }
 function haptic(ms=12){ if(navigator.vibrate) navigator.vibrate(ms); }
 
+
+
+function openBrowseModal(){ renderBrowseScheduleModal(); $('browseScheduleModal')?.classList.remove('hidden'); }
+function closeBrowseModal(){ $('browseScheduleModal')?.classList.add('hidden'); }
+function renderBrowseScheduleModal(){
+  const schedule = activeSchedule();
+  const q = ($('browseScheduleSearch')?.value || '').trim();
+  const rows = readings.filter(r => matchReading(r, q));
+  if($('browseScheduleTitle')) $('browseScheduleTitle').textContent = schedule.name;
+  if($('browseScheduleEyebrow')) $('browseScheduleEyebrow').textContent = schedule.browseTitle;
+  if($('browseScheduleNote')) $('browseScheduleNote').textContent = `Choose any ${schedule.unitSingular} to make it your current place. Progress in other plans stays saved.`;
+  const list = $('browseScheduleList');
+  if(!list) return;
+  list.innerHTML = rows.length ? rows.map(r => `<button class="browse-schedule-row ${r.id===state.current?'active':''}" data-id="${r.id}" type="button">
+    <span class="reading-num"><small>${schedule.itemLabel}</small><strong>${schedule.id === 'complete' ? r.id : r.quranSurah}</strong></span>
+    <span><strong>${passageTitleNumbered(r)}</strong><small>${r.theme} • ${r.minutes} • ${r.ayat} āyāt</small></span>
+    <span class="browse-row-check">${isCompleted(r.id) ? '✓' : '○'}</span>
+  </button>`).join('') : `<p class="subtle">No ${schedule.unitPlural} matched your search.</p>`;
+  list.querySelectorAll('[data-id]').forEach(btn => btn.addEventListener('click', () => { setStartingReading(Number(btn.dataset.id)); closeBrowseModal(); }));
+}
+
+function openPlanModal(){ renderPlanModal(); $('planModal')?.classList.remove('hidden'); }
+function closePlanModal(){ $('planModal')?.classList.add('hidden'); }
+function renderPlanModal(){
+  const wrap = $('planOptions');
+  if(!wrap) return;
+  wrap.innerHTML = allSchedules().map(schedule => {
+    const summary = planProgressSummary(schedule.id);
+    const isActive = schedule.id === activePlanId;
+    const pct = summary.total ? Math.round((summary.completed / summary.total) * 100) : 0;
+    return `<button class="plan-option ${isActive?'active':''} plan-${schedule.accent}" data-plan-id="${schedule.id}" type="button">
+      <span class="plan-option-icon" aria-hidden="true">${schedule.icon}</span>
+      <span class="plan-option-main">
+        <strong>${schedule.name}</strong>
+        <small>${schedule.countLabel}</small>
+        <span class="plan-option-desc">${schedule.description}</span>
+        <span class="plan-mini-progress"><span style="width:${pct}%"></span></span>
+        <em>${summary.status}</em>
+        <span class="plan-last-read">Last read: ${summary.last}</span>
+      </span>
+      <span class="plan-check" aria-hidden="true">${isActive?'✓':'○'}</span>
+    </button>`;
+  }).join('');
+  wrap.querySelectorAll('[data-plan-id]').forEach(btn => btn.addEventListener('click', () => switchPlan(btn.dataset.planId)));
+}
+
 function renderStartCycleCard(){
+  const schedule = activeSchedule();
   const allDone = state.completed.size >= readings.length;
   const card = document.querySelector('.start-cycle-card');
   if(!card) return;
@@ -645,26 +884,33 @@ function renderStartCycleCard(){
   const text = card.querySelector('p:not(.eyebrow)');
   const btn = $('startNewCycleBtn');
   if(allDone){
-    eyebrow.textContent = 'Start New Cycle';
-    strong.textContent = 'Begin a fresh journey from Reading 1.';
-    text.textContent = 'Your completed cycle will be recorded in History, then a new cycle will begin.';
-    btn.textContent = 'Start New Cycle';
+    eyebrow.textContent = `Start ${schedule.name} Again`;
+    strong.textContent = `Begin this plan again from the first ${schedule.unitSingular}.`;
+    text.textContent = 'Your completed cycle will be recorded in History, then a fresh cycle will begin.';
+    btn.textContent = `Start ${schedule.name} Again`;
   } else {
-    eyebrow.textContent = 'Restart Current Cycle';
-    strong.textContent = 'Start this cycle over from Reading 1.';
-    text.textContent = 'This clears only this app’s completion checks. It will not create a completed cycle or increase the cycle number.';
-    btn.textContent = 'Restart Current Cycle';
+    eyebrow.textContent = `Restart ${schedule.name}`;
+    strong.textContent = `Start this plan over from the beginning.`;
+    text.textContent = 'This clears only this plan’s completion checks. Progress in other plans will not be affected.';
+    btn.textContent = `Restart ${schedule.name}`;
   }
 }
-function renderAll(){ renderCurrent(); renderHome(); renderReadings(); renderHistory(); updateProgress(); renderStartCycleCard(); }
+function renderAll(){ renderCurrent(); renderHome(); renderReadings(); renderHistory(); updateProgress(); renderStartCycleCard(); renderPlanSelector(); }
 
 $('completeBtn').addEventListener('click',markCurrentComplete);
 $('beginNextBtn').addEventListener('click',()=>{ if(state.completionAck && state.completionAck.completedId===readings.length){ startNewCycle({recordCompleted:true}); return; } state.completionAck=null; save(); renderAll(); });
 $('undoCompleteBtn').addEventListener('click',undoLastCompletion);
 $('prevBtn').addEventListener('click',()=>{state.completionAck=null;state.current=Math.max(1,state.current-1);save();renderAll();}); $('nextBtn').addEventListener('click',()=>{state.completionAck=null;state.current=Math.min(readings.length,state.current+1);save();renderAll();}); $('upNextBtn').addEventListener('click',()=>{state.completionAck=null;state.current=Math.min(readings.length,state.current+1);save();renderAll();showView('current');});
 $('startNewCycleBtn').addEventListener('click',()=>startNewCycle());
+$('currentPlanBtn')?.addEventListener('click',openPlanModal);
+$('closePlanModal')?.addEventListener('click',closePlanModal);
+$('cancelPlanModal')?.addEventListener('click',closePlanModal);
+$('planModal')?.addEventListener('click',e=>{ if(e.target.id === 'planModal') closePlanModal(); });
+$('closeBrowseScheduleModal')?.addEventListener('click',closeBrowseModal);
+$('browseScheduleModal')?.addEventListener('click',e=>{ if(e.target.id === 'browseScheduleModal') closeBrowseModal(); });
+$('browseScheduleSearch')?.addEventListener('input',renderBrowseScheduleModal);
 $('jumpSearch').addEventListener('input',e=>{state.query=e.target.value;renderJump();}); $('browseAllBtn').addEventListener('click',()=>{state.query='';$('jumpSearch').value='';renderJump();}); document.querySelectorAll('[data-query]').forEach(btn=>btn.addEventListener('click',()=>{state.query=btn.dataset.query;$('jumpSearch').value=state.query;renderJump();}));
-document.querySelectorAll('[data-view]').forEach(btn=>btn.addEventListener('click',()=>showView(btn.dataset.view))); document.querySelectorAll('[data-filter]').forEach(btn=>btn.addEventListener('click',()=>{state.filter=btn.dataset.filter;document.querySelectorAll('[data-filter]').forEach(p=>p.classList.toggle('active',p.dataset.filter===state.filter));renderReadings();}));
+document.querySelectorAll('[data-view]').forEach(btn=>btn.addEventListener('click',()=>{ if(btn.dataset.view==='readings'){ openBrowseModal(); return; } showView(btn.dataset.view); })); document.querySelectorAll('[data-filter]').forEach(btn=>btn.addEventListener('click',()=>{state.filter=btn.dataset.filter;document.querySelectorAll('[data-filter]').forEach(p=>p.classList.toggle('active',p.dataset.filter===state.filter));renderReadings();}));
 
 $('homeReaderBtn').addEventListener('click',openReader);
 $('openReaderBtn').addEventListener('click',openReader);
@@ -678,7 +924,7 @@ $('readerNotesBtn').addEventListener('click',()=>{haptic(10); alert('Notes can b
 $('readerBody').addEventListener('scroll',()=>{ updateReaderProgress(); clearTimeout(window.__qrcScrollTimer); window.__qrcScrollTimer=setTimeout(saveReaderScroll,150); });
 $('resumeReadingBtn').addEventListener('click',()=>{
   const reading=readerReading();
-  const savedTop=Number((state.readerScroll || {})[reading.id] || 0);
+  const savedTop=Number((state.readerScroll || {})[readerScrollKey(reading)] || 0);
   hideResumePrompt();
   $('readerBody').scrollTo({top:savedTop, behavior:'smooth'});
   haptic(10);
@@ -714,5 +960,5 @@ $('resetReaderAppearance').addEventListener('click',()=>{
 });
 
 function openAbout(){ $('aboutModal').classList.remove('hidden'); } function closeAbout(){ $('aboutModal').classList.add('hidden'); }
-document.querySelectorAll('[data-modal="aboutSchedule"]').forEach(btn=>btn.addEventListener('click',openAbout)); $('closeAboutModal').addEventListener('click',closeAbout); $('gotItAbout').addEventListener('click',closeAbout); $('aboutModal').addEventListener('click',e=>{if(e.target.id==='aboutModal') closeAbout();}); document.addEventListener('keydown',e=>{if(e.key==='Escape') { closeAbout(); $('readerAppearancePanel')?.classList.add('hidden'); closeReader(); }});
+document.querySelectorAll('[data-modal="aboutSchedule"]').forEach(btn=>btn.addEventListener('click',openAbout)); $('closeAboutModal').addEventListener('click',closeAbout); $('gotItAbout').addEventListener('click',closeAbout); $('aboutModal').addEventListener('click',e=>{if(e.target.id==='aboutModal') closeAbout();}); document.addEventListener('keydown',e=>{if(e.key==='Escape') { closeAbout(); closePlanModal(); closeBrowseModal(); $('readerAppearancePanel')?.classList.add('hidden'); closeReader(); }});
 renderAll();
