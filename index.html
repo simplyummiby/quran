@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quran Reading Companion v0.15.1</title>
+  <title>Quran Reading Companion v0.15.2</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Scheherazade+New:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -30,6 +30,7 @@
       <button class="nav-item" data-view="readings"><img class="nav-icon" src="assets/icons/clipboard-list.svg" alt="" aria-hidden="true"><span>My Schedule</span></button>
       <button class="nav-item" data-action="openPlans"><img class="nav-icon" src="assets/icons/library.svg" alt="" aria-hidden="true"><span>Reading Plans</span></button>
       <button class="nav-item" data-view="history"><img class="nav-icon" src="assets/icons/check-circle.svg" alt="" aria-hidden="true"><span>History</span></button>
+      <button class="nav-item" data-view="backup"><img class="nav-icon" src="assets/icons/backup.svg" alt="" aria-hidden="true"><span>Backup &amp; Restore</span></button>
       <button class="nav-item" data-modal="aboutSchedule"><img class="nav-icon" src="assets/icons/info.svg" alt="" aria-hidden="true"><span>About This App</span></button>
     </nav>
 
@@ -47,6 +48,7 @@
         <button class="nav-item" data-view="readings"><img class="nav-icon" src="assets/icons/clipboard-list.svg" alt="" aria-hidden="true"><span>My Schedule</span></button>
         <button class="nav-item" data-action="openPlans"><img class="nav-icon" src="assets/icons/library.svg" alt="" aria-hidden="true"><span>Reading Plans</span></button>
         <button class="nav-item" data-view="history"><img class="nav-icon" src="assets/icons/check-circle.svg" alt="" aria-hidden="true"><span>History</span></button>
+        <button class="nav-item" data-view="backup"><img class="nav-icon" src="assets/icons/backup.svg" alt="" aria-hidden="true"><span>Backup &amp; Restore</span></button>
         <button class="nav-item" data-modal="aboutSchedule"><img class="nav-icon" src="assets/icons/info.svg" alt="" aria-hidden="true"><span>About This App</span></button>
 
         <div class="quote-card">
@@ -107,6 +109,14 @@
           <span aria-hidden="true">✓</span>
           <p>Your progress is saved separately for each reading plan. Switch anytime without losing your place.</p>
         </div>
+
+        <div class="backup-tip hidden" id="backupTip">
+          <div>
+            <strong>Tip: protect your progress</strong>
+            <p>Your reading progress is stored on this device. You can create a backup anytime from <strong>Backup &amp; Restore</strong>.</p>
+          </div>
+          <button class="ghost-outline" id="dismissBackupTip" type="button">Got it</button>
+        </div>
       </section>
 
       <section class="content hidden" id="currentView">
@@ -163,6 +173,30 @@
         <div id="completedCyclesByPlan" class="completed-cycles-by-plan"></div>
       </section>
 
+      <section class="content hidden" id="backupView">
+        <div class="section-heading">
+          <p class="eyebrow">Backup &amp; Restore</p>
+          <h2>Protect Your Progress</h2>
+        </div>
+
+        <div class="backup-grid">
+          <article class="home-panel backup-card">
+            <h3>Download Backup</h3>
+            <p>Save your reading progress, history, plan choices, and reader preferences as a backup file.</p>
+            <p class="subtle" id="lastBackupText">Last backup: Never</p>
+            <button class="primary-btn" id="downloadBackupBtn" type="button">Download Backup</button>
+          </article>
+
+          <article class="home-panel backup-card">
+            <h3>Restore Backup</h3>
+            <p>Restore your app data from a backup file you downloaded earlier.</p>
+            <label class="restore-file-label" for="restoreBackupInput">Choose Backup File</label>
+            <input id="restoreBackupInput" type="file" accept="application/json,.json" />
+            <p class="subtle" id="restoreStatusText" aria-live="polite"></p>
+          </article>
+        </div>
+      </section>
+
       <aside class="right-panel" aria-label="Reading progress summary">
         <section class="home-panel progress-home-card sidebar-progress-card">
           <h3>Progress</h3>
@@ -214,7 +248,10 @@
       <div id="planOptions" class="plan-options" aria-label="Reading plan options"></div>
       <div class="plan-modal-footer">
         <p>Each plan keeps its own progress, so you can focus on your journey in the way that works best for you.</p>
-        <button class="ghost-outline" id="cancelPlanModal" type="button">Cancel</button>
+        <div class="plan-modal-actions">
+          <button class="ghost-outline danger-soft" id="modalStartPlanOverBtn" type="button">Start This Plan Over</button>
+          <button class="ghost-outline" id="cancelPlanModal" type="button">Cancel</button>
+        </div>
       </div>
     </div>
   </div>

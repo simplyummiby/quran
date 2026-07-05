@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.15.2
+- Added Backup & Restore page with JSON export and restore.
+- Added local storage notice to About This App.
+- Added first-run backup tip on the Home page.
+- Added Start This Plan Over option in the Reading Plans modal.
+- Updated plan reset confirmation to explain what will and will not change.
+
 ## v0.15.1
 - Rewrote the About This App modal to be shorter and plan-neutral.
 - Kept Arabic text and English translation details in About This App.

@@ -272,7 +272,7 @@ const state = {
 const surahCache = new Map();
 
 const $ = (id) => document.getElementById(id);
-const views = ['home','current','readings','history'];
+const views = ['home','current','readings','history','backup'];
 const PLAN_PROGRESS_KEY = 'qrc_plan_progress_v09';
 
 function activeSchedule(){ return SCHEDULES[activePlanId] || SCHEDULES.complete; }
@@ -1295,14 +1295,13 @@ function renderResetControls(){
 }
 function resetCurrentPlanProgress(){
   const schedule = activeSchedule();
-  const confirmed = confirm(`Reset ${schedule.name}?\n\nThis will clear completed checks, saved reading position, and current place for ${schedule.name} only.\n\nYour other reading plans will not be affected.`);
+  const confirmed = confirm(`Start this plan over?\n\nThis will:\n• Reset your progress for ${schedule.name}.\n• Move your current reading back to the beginning.\n• Keep your History unchanged.`);
   if(!confirmed) return;
   state.current = 1;
   state.completed.clear();
   state.completionAck = null;
+  state.previewReadingId = null;
   state.cycleStarted = new Date().toISOString();
-  state.history = (state.history || []).filter(item => item && item.type === 'completed-cycle');
-  state.cycle = state.history.filter(item => item && item.type === 'completed-cycle').length + 1;
   if(state.readerScroll){
     readings.forEach(reading => { delete state.readerScroll[readerScrollKey(reading)]; });
   }
@@ -1406,7 +1405,72 @@ function renderStartCycleCard(){
     btn.textContent = `Restart ${schedule.name}`;
   }
 }
-function renderAll(){ renderCurrent(); renderHome(); renderReadings(); renderHistory(); updateProgress(); renderStartCycleCard(); renderPlanSelector(); renderResetControls(); }
+
+function qrcStorageSnapshot(){
+  const data = {};
+  for(let i = 0; i < localStorage.length; i += 1){
+    const key = localStorage.key(i);
+    if(key && key.startsWith('qrc_')) data[key] = localStorage.getItem(key);
+  }
+  return {
+    app: 'quran-reading-companion',
+    version: '0.15.2',
+    exportedAt: new Date().toISOString(),
+    localStorage: data
+  };
+}
+function formatBackupDate(iso){
+  if(!iso) return 'Never';
+  try { return new Date(iso).toLocaleString(undefined, { month:'short', day:'numeric', year:'numeric', hour:'numeric', minute:'2-digit' }); }
+  catch { return 'Unknown'; }
+}
+function renderBackupPage(){
+  const last = localStorage.getItem('qrc_last_backup_v0152');
+  if($('lastBackupText')) $('lastBackupText').textContent = `Last backup: ${formatBackupDate(last)}`;
+}
+function downloadBackup(){
+  const snapshot = qrcStorageSnapshot();
+  const blob = new Blob([JSON.stringify(snapshot, null, 2)], { type: 'application/json' });
+  const stamp = new Date().toISOString().slice(0,10);
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `quran-reading-companion-backup-${stamp}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  localStorage.setItem('qrc_last_backup_v0152', new Date().toISOString());
+  renderBackupPage();
+}
+function restoreBackupFile(file){
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const parsed = JSON.parse(String(reader.result || '{}'));
+      const data = parsed.localStorage || parsed;
+      if(!data || typeof data !== 'object') throw new Error('Invalid backup file.');
+      Object.keys(data).forEach(key => {
+        if(key.startsWith('qrc_')) localStorage.setItem(key, String(data[key]));
+      });
+      if($('restoreStatusText')) $('restoreStatusText').textContent = 'Backup restored. Reloading…';
+      setTimeout(() => window.location.reload(), 650);
+    } catch (error) {
+      if($('restoreStatusText')) $('restoreStatusText').textContent = 'That backup file could not be restored.';
+    }
+  };
+  reader.readAsText(file);
+}
+function renderBackupTip(){
+  const tip = $('backupTip');
+  if(!tip) return;
+  const dismissed = localStorage.getItem('qrc_backup_tip_dismissed_v0152') === 'true';
+  const hasProgress = hasAnySavedProgress();
+  tip.classList.toggle('hidden', dismissed || hasProgress);
+}
+
+function renderAll(){ renderCurrent(); renderHome(); renderReadings(); renderHistory(); renderBackupPage(); renderBackupTip(); updateProgress(); renderStartCycleCard(); renderPlanSelector(); renderResetControls(); }
 
 $('completeBtn')?.addEventListener('click',markCurrentComplete);
 $('beginNextBtn')?.addEventListener('click',()=>{ if(state.completionAck && state.completionAck.completedId===readings.length){ startNewCycle({recordCompleted:true}); return; } state.completionAck=null; save(); renderAll(); });
@@ -1422,6 +1486,10 @@ $('browseScheduleModal')?.addEventListener('click',e=>{ if(e.target.id === 'brow
 $('browseScheduleSearch')?.addEventListener('input',renderBrowseScheduleModal);
 $('resetPlanProgressBtn')?.addEventListener('click',resetCurrentPlanProgress);
 $('homeResetPlanBtn')?.addEventListener('click',resetCurrentPlanProgress);
+$('modalStartPlanOverBtn')?.addEventListener('click',()=>{ resetCurrentPlanProgress(); closePlanModal(); });
+$('downloadBackupBtn')?.addEventListener('click',downloadBackup);
+$('restoreBackupInput')?.addEventListener('change',e=>restoreBackupFile(e.target.files && e.target.files[0]));
+$('dismissBackupTip')?.addEventListener('click',()=>{ localStorage.setItem('qrc_backup_tip_dismissed_v0152','true'); renderBackupTip(); });
 $('homeStartNewCycleBtn')?.addEventListener('click',()=>startNewCycle({recordCompleted:true}));
 if($('jumpSearch')) $('jumpSearch').addEventListener('input',e=>{state.query=e.target.value;renderJump();}); if($('browseAllBtn')) $('browseAllBtn').addEventListener('click',()=>{state.query='';$('jumpSearch').value='';renderJump();}); if($('homeBrowseScheduleBtn')) $('homeBrowseScheduleBtn').addEventListener('click',openBrowseModal); document.querySelectorAll('[data-query]').forEach(btn=>btn.addEventListener('click',()=>{state.query=btn.dataset.query;if($('jumpSearch')) $('jumpSearch').value=state.query;renderJump();}));
 document.querySelectorAll('[data-action="openPlans"]').forEach(btn=>btn.addEventListener('click', (event)=>{ event.preventDefault(); openPlanModal(); }));
