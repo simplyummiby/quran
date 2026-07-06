@@ -596,10 +596,20 @@ function recentReadingStreak(){
   }
   return streak;
 }
+function streakEncouragement(streak){
+  if(streak === 0) return 'Every day is an opportunity to begin again.';
+  if(streak === 1) return 'A wonderful beginning!';
+  if(streak < 7) return 'Keep building your habit.';
+  if(streak < 14) return "You're creating consistency.";
+  if(streak < 30) return "Masha'Allah, keep going!";
+  return 'A beautiful habit has formed.';
+}
 function renderStreak(){
   const streak = recentReadingStreak();
   if($('streakCount')) $('streakCount').textContent = streak;
-  if($('streakMessage')) $('streakMessage').textContent = streak ? 'Keep it up!' : 'Complete a reading to begin.';
+  const streakUnit = document.querySelector('.streak-main span');
+  if(streakUnit) streakUnit.textContent = streak === 1 ? 'day' : 'days';
+  if($('streakMessage')) $('streakMessage').textContent = streakEncouragement(streak);
   const dots = $('streakDots');
   if(!dots) return;
   const dayLetters = ['S','M','T','W','T','F','S'];

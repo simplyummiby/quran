@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.16.4
+- Polished the Current Streak card.
+- Changed the streak number to the app's sans-serif UI font so 1 reads clearly as a number.
+- Added DAY/DAYS singular and plural wording.
+- Added dynamic streak encouragement messages by streak length.
+- Tightened streak card spacing slightly.
+
 ## v0.16.3
 - Fixed the completion screen button after marking a reading complete.
 - Button now says **Go to Next Reading** instead of falling back to Reading 1 on plans like Two Pages a Day.

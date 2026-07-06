@@ -3688,3 +3688,30 @@ body {
     width: auto;
   }
 }
+
+
+/* v0.16.4 streak card polish */
+.streak-main {
+  gap: 2px !important;
+  margin: 4px 0 6px !important;
+}
+.streak-main strong {
+  font-family: var(--font-ui) !important;
+  font-weight: 800 !important;
+  font-size: 3.75rem !important;
+  line-height: .95 !important;
+  font-variant-numeric: tabular-nums;
+}
+.streak-main span {
+  font-family: var(--font-ui) !important;
+  font-size: .78rem !important;
+  color: var(--muted) !important;
+}
+#streakMessage {
+  margin: 2px auto 0 !important;
+  max-width: 260px;
+  line-height: 1.45;
+}
+.streak-dots {
+  margin-top: 16px !important;
+}
